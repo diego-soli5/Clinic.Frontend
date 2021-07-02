@@ -1,7 +1,36 @@
-﻿
+﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeListViewModel
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Listado de Empleados";
 }
 
-<h1>Index de Employee Admin</h1>
+
+<div class="border">
+    <h1 class="text-info text-center mt-2">Listado de Empleados</h1>
+    <div class="col-sm-12">
+        <form method="get" class="row" id="frmSearch">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label asp-for="QueryFilters.Identification"></label>
+                    <input asp-for="QueryFilters.Identification" id="identification" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label asp-for="QueryFilters.EmployeeStatus"></label>
+                    @Html.DropDownList(nameof(Model.QueryFilters.EmployeeStatus), Model.SelectListEmployeeStatus, "Todos", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <input type="submit" value="Buscar" class="btn btn-outline-primary btn-block form-control" />
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-12" id="tblEmployees">
+        @{ await Html.RenderPartialAsync("_EmployeePagedTablePartial", Model); }
+    </div>
+</div>
+
+@section Scripts{ 
+    <script src="~/js/employee.js"></script>
+}
 

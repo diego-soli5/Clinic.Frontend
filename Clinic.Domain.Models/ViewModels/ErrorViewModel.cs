@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace Clinic.Web.Models
+namespace Clinic.Domain.Models.ViewModels
 {
     public class ErrorViewModel
     {

@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Clinic.Domain.Extensions;
+using Clinic.CrossCutting.Routes;
 
 namespace Clinic.Web
 {
@@ -24,6 +21,20 @@ namespace Clinic.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddRazorPages().AddRazorRuntimeCompilation();
+
+            services.AddHttpClient();
+
+            services.AddRepositories();
+
+            services.AddOptions(Configuration);
+
+            services.AddHelpers();
+
+            services.AddSingleton(typeof(ApiRoutes));
+
+            services.AddDomainServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

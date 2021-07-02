@@ -5,10 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Clinic.CrossCutting\Clinic.CrossCutting.csproj" />
     <ProjectReference Include="..\Clinic.Data\Clinic.Data.csproj" />
     <ProjectReference Include="..\Clinic.Domain.Models\Clinic.Domain.Models.csproj" />
   </ItemGroup>

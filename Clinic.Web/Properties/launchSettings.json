@@ -1,10 +1,14 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/Clinic.Web",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:64585/Admin/Employee",
-      "sslPort": 44397
+      "applicationUrl": "http://localhost:13136/admin/employee",
+      "sslPort": 44354
     }
   },
   "profiles": {
@@ -17,14 +21,14 @@
       }
     },
     "Clinic.Web": {
-      "commandName": "Project",
-      "dotnetRunMessages": "true",
+      "commandName": "IIS",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }
