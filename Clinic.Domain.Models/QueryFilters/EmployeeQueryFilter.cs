@@ -12,6 +12,7 @@ namespace Clinic.Domain.QueryFilters
         public EmployeeRole? EmployeeRole { get; set; }
         [Display(Name = "Estado")]
         public EmployeeStatus? EmployeeStatus { get; set; }
+        public bool IsPagination { get; set; }
 
         public EmployeeQueryFilter(int pageNumber)
         {

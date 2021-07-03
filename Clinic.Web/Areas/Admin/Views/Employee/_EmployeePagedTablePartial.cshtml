@@ -1,7 +1,7 @@
 ﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeListViewModel
 
 <div class="row">
-    <table class="table table-hover table-responsive-sm">
+    <table class="table table-hover table-responsive-sm table-responsive-md">
         <thead>
             <tr>
                 <th>Identificación</th>
@@ -13,33 +13,42 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var emp in Model.Employees)
+            @if (Model.Metadata.TotalCount > 0)
             {
-                <tr class="border">
-                    <td>
-                        @emp.Identification
-                    </td>
-                    <td>@emp.FullName</td>
-                    <td>@emp.HireDate.ToShortDateString()</td>
-                    <td>@emp.EmployeeRole.ToString()</td>
-                    <td>@emp.EmployeeStatus.ToString()</td>
-                    <td>
-                        <div class="row">
-                            <div class="col-xl-6">
-                                @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
-                                {
-                                    <a href="#" class="btn btn-info btn-block">Activo</a>
-                                }
-                                else
-                                {
-                                    <a href="#" class="btn btn-danger btn-block">Despedir</a>
-                                }
+                @foreach (var emp in Model.Employees)
+                {
+                    <tr class="border">
+                        <td>
+                            @emp.Identification
+                        </td>
+                        <td>@emp.FullName</td>
+                        <td>@emp.HireDate.ToShortDateString()</td>
+                        <td>@emp.EmployeeRole.ToString()</td>
+                        <td>@emp.EmployeeStatus.ToString()</td>
+                        <td>
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
+                                    {
+                                        <a href="#" class="btn btn-info btn-block">Activo</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="btn btn-danger btn-block">Despedir</a>
+                                    }
+                                </div>
+                                <div class="col-xl-6">
+                                    <a href="#" class="btn btn-success btn-block">Editar</a>
+                                </div>
                             </div>
-                            <div class="col-xl-6">
-                                <a href="#" class="btn btn-success btn-block">Editar</a>
-                            </div>
-                        </div>
-                    </td>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
                 </tr>
             }
         </tbody>
@@ -48,31 +57,34 @@
         <a href="#" class="btn btn-primary mb-2">Agregar nuevo</a>
     </div>
     <div class="mr-auto ml-auto">
-        <nav>
-            <ul class="pagination justify-content-center">
-                @{ 
-                    string prevDisabled = (!Model.Metadata.HasPreviousPage) ? "disabled": "";
-                    string nextDisabled = (!Model.Metadata.HasNextPage) ? "disabled" : "";
-                }
-                <li class="page-item @prevDisabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
-                </li>
-                @for (int i = 0; i < Model.Metadata.TotalPages; i++)
-                {
-                    string currentDisabled = "";
-
-                    if (Model.Metadata.CurrentPage == i + 1)
-                    {
-                        currentDisabled = "disabled";
+        @if (Model.Metadata.TotalCount > 0)
+        {
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @{
+                        string prevDisabled = (!Model.Metadata.HasPreviousPage) ? "disabled" : "";
+                        string nextDisabled = (!Model.Metadata.HasNextPage) ? "disabled" : "";
                     }
+                    <li class="page-item @prevDisabled">
+                        <button class="page-link" href="#" tabindex="-1" aria-disabled="true" data-page="@Model.Metadata.PreviousPageNumber" id="btnPrevPage">Anterior</button>
+                    </li>
+                    @for (int i = 0; i < Model.Metadata.TotalPages; i++)
+                    {
+                        string currentDisabled = "";
 
-                    <li class="page-item @currentDisabled"><button class="page-link" data-page="@(i+1)" id="btnPage">@(i+1)</button></li>
-                }
-                <li class="page-item @nextDisabled">
-                    <a class="page-link" href="#">Siguiente</a>
-                </li>
-            </ul>
-        </nav>
+                        if (Model.Metadata.CurrentPage == i + 1)
+                        {
+                            currentDisabled = "disabled";
+                        }
+
+                        <li class="page-item @currentDisabled"><button class="page-link" data-page="@(i+1)" id="btnPage">@(i+1)</button></li>
+                    }
+                    <li class="page-item @nextDisabled">
+                        <button class="page-link" data-page="@Model.Metadata.NextPageNumber" id="btnNextPage">Siguiente</button>
+                    </li>
+                </ul>
+            </nav>
+        }
     </div>
 </div>
 

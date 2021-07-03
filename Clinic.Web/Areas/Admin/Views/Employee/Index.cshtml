@@ -8,6 +8,7 @@
     <h1 class="text-info text-center mt-2">Listado de Empleados</h1>
     <div class="col-sm-12">
         <form method="get" class="row" id="frmSearch">
+            @Html.AntiForgeryToken()
             <div class="col-sm-6">
                 <div class="form-group">
                     <label asp-for="QueryFilters.Identification"></label>
@@ -20,7 +21,7 @@
                     @Html.DropDownList(nameof(Model.QueryFilters.EmployeeStatus), Model.SelectListEmployeeStatus, "Todos", new { @class = "form-control" })
                 </div>
             </div>
-            <div class="col-sm-2 mb-3">
+            <div class="col-sm-3 mb-3">
                 <input type="submit" value="Buscar" class="btn btn-outline-primary btn-block form-control" />
             </div>
         </form>

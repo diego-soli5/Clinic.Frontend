@@ -31,5 +31,13 @@ namespace Clinic.Web.Areas.Admin.Controllers
 
             return PartialView("_EmployeePagedTablePartial", oVM);
         }
+
+        #region API ACTIONS
+        [HttpPost]
+        public async Task<IActionResult> Fire(int id)
+        {
+            return Ok();
+        }
+        #endregion
     }
 }
