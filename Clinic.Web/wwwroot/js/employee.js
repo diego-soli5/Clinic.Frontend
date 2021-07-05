@@ -1,15 +1,27 @@
-﻿$(function () {
+﻿var currentPage = 1;
 
+$(function () {
+
+    //INICIA MISC
+    function bindEvts(pgnum) {
+        bindPaginationEvts();
+        bindCRUDevts();
+
+        currentPage = pgnum;
+    }
+    //FIN MISC
+
+    //INICIA PAGINACION
     $("#frmSearch").submit(function (e) {
-         e.preventDefault();
- 
-         let ide = $("#identification").val();
-         let status = $("#EmployeeStatus").val();
- 
-         $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${status}`, function () {
-             bindPaginationEvts();
-         });
-         
+        e.preventDefault();
+
+        let ide = $("#identification").val();
+        let status = $("#EmployeeStatus").val();
+
+        $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${status}`, function () {
+            bindEvts(1);
+        });
+
     });
 
     function bindPaginationEvts() {
@@ -44,10 +56,86 @@
     function getPaginatedPage(pgnum) {
 
         $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true`, function () {
-            bindPaginationEvts();
+            bindEvts(pgnum);
         });
     }
 
     bindPaginationEvts();
+    //FIN PAGINACION
 
+    //INICIA BOTONES FIRE & ACTIVATE
+    function bindCRUDevts() {
+        document.querySelectorAll("#btnFire").forEach(x => {
+            x.addEventListener("click", function (e) {
+                let id = e.target.getAttribute("data-id");
+
+                Swal.fire({
+                    title: 'Despedir empleado?',
+                    text: "Estás seguro de realizar la acción?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, estoy seguro.',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        fetch(`/api/admin/employee/fire/${id}`, { method: 'POST' })
+                            .then(res => res.json())
+                            .then(data => {
+
+                                swalAlert(data.message, data.success);
+
+                                if (data.success) {
+                                    getPaginatedPage(currentPage);
+                                }
+
+                            }).catch(err => {
+                                swalAlert("Hubo un error desconocido, asegurate de tener conexión a internet.", false);
+                            });
+                    }
+                })
+            });
+        });
+
+        document.querySelectorAll("#btnActivate").forEach(x => {
+            x.addEventListener("click", function (e) {
+                let id = e.target.getAttribute("data-id");
+
+                Swal.fire({
+                    title: 'Activar empleado?',
+                    text: "Estás seguro de realizar la acción?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, estoy seguro.',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        fetch(`/api/admin/employee/activate/${id}`, { method: 'POST' })
+                            .then(res => res.json())
+                            .then(data => {
+
+                                swalAlert(data.message, data.success);
+
+                                if (data.success) {
+                                    getPaginatedPage(currentPage);
+                                }
+               
+                            }).catch(err => {
+                                swalAlert("Hubo un error desconocido, asegurate de tener conexión a internet.", false);
+                            });
+                    }
+                })
+            });
+        });
+    }
+
+    bindCRUDevts();
+    //FIN BOTONES FIRE & ACTIVATE
 });
+
+

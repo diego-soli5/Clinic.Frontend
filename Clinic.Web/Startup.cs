@@ -32,7 +32,7 @@ namespace Clinic.Web
 
             services.AddHelpers();
 
-            services.AddSingleton(typeof(ApiRoutes));
+            services.AddRoutes();
 
             services.AddDomainServices();
         }

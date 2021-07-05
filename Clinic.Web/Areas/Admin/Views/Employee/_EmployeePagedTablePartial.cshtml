@@ -7,7 +7,7 @@
                 <th>Identificación</th>
                 <th>Nombre Completo</th>
                 <th>Fecha de Contratación</th>
-                <th>Rol</th>
+                <th>Tipo de Empleado</th>
                 <th>Estado</th>
                 <th class="text-center">Acciones</th>
             </tr>
@@ -30,15 +30,15 @@
                                 <div class="col-xl-6">
                                     @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
                                     {
-                                        <a href="#" class="btn btn-info btn-block">Activo</a>
+                                        <button class="btn btn-info btn-block" data-id="@emp.Id" id="btnActivate">Activar</button>
                                     }
                                     else
                                     {
-                                        <a href="#" class="btn btn-danger btn-block">Despedir</a>
+                                        <button class="btn btn-danger btn-block" data-id="@emp.Id" id="btnFire">Despedir</button>
                                     }
                                 </div>
                                 <div class="col-xl-6">
-                                    <a href="#" class="btn btn-success btn-block">Editar</a>
+                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block">Editar</a>
                                 </div>
                             </div>
                         </td>

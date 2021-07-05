@@ -8,6 +8,7 @@ using Clinic.Domain.QueryFilters;
 using Clinic.CrossCutting.Abstractions;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
 using Clinic.CrossCutting.Cache;
+using Clinic.Domain.Models.Responses;
 
 namespace Clinic.Domain.Services
 {
@@ -15,12 +16,12 @@ namespace Clinic.Domain.Services
     {
         private readonly IRepository _repository;
         private readonly IUriGenerator _uriGenerator;
-        private readonly ApiRoutes _apiRoutes;
+        private readonly EmployeeRoutes _employeeRoutes;
 
-        public EmployeeService(IRepository repository, ApiRoutes apiRoutes, IUriGenerator uriGenerator)
+        public EmployeeService(IRepository repository, EmployeeRoutes employeeRoutes, IUriGenerator uriGenerator)
         {
             _repository = repository;
-            _apiRoutes = apiRoutes;
+            _employeeRoutes = employeeRoutes;
             _uriGenerator = uriGenerator;
         }
 
@@ -28,7 +29,7 @@ namespace Clinic.Domain.Services
         {
             EmployeeCache.GetEmployeeQueryFilterCache(filters);
 
-            string url = _uriGenerator.CreateUri(_apiRoutes.Employee, filters).ToString();
+            string url = _uriGenerator.CreatePagedListUri(_employeeRoutes.Employee, filters).ToString();
 
             var apiResponse = await _repository.Get<IEnumerable<EmployeeListDTO>>(url);
 
@@ -41,6 +42,45 @@ namespace Clinic.Domain.Services
             };
 
             return oViewModel;
+        }
+
+        public async Task<EmployeeEditViewModel> GetByIdToUpdateAsync(int id)
+        {
+            string url = $"{_employeeRoutes.Employee}/{id}";
+
+            url = _uriGenerator.CreateUri(url, new Dictionary<string, object> { { "isUpdate", true } }).ToString();
+
+            var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url);
+
+            EmployeeEditViewModel oViewModel = new()
+            {
+                Employee = apiResponse.Data,
+                Message = apiResponse.Message,
+                Success = apiResponse.Success
+            };
+
+            return oViewModel;
+        }
+
+        public async Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model)
+        {
+            string url = $"{_employeeRoutes.Employee}/{model.Id}";
+
+            return await _repository.Put(url, model);
+        }
+
+        public async Task<DefaultPatchApiResponse> Fire(int id)
+        {
+            string url = _employeeRoutes.Fire + id;
+
+            return await _repository.Patch(url);
+        }
+
+        public async Task<DefaultPatchApiResponse> Activate(int id)
+        {
+            string url = _employeeRoutes.Activate + id;
+
+            return await _repository.Patch(url);
         }
     }
 }

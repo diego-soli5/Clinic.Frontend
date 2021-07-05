@@ -1,4 +1,4 @@
-﻿namespace Clinic.Domain.Models.DTOs.Api
+﻿namespace Clinic.Domain.Models.Responses
 {
     public class Metadata
     {

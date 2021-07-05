@@ -1,10 +1,13 @@
-﻿using Clinic.Domain.Models.DTOs.Api;
+﻿using Clinic.Domain.Models.Responses;
 using System.Threading.Tasks;
 
 namespace Clinic.Data.Abstractions
 {
     public interface IRepository
     {
-        Task<ApiReponseResultDTO<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultGetApiResponse<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultPostApiResponse> Post(string url,object dataToSend = null, string authToken = null);
+        Task<DefaultPutApiResponse> Put(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultPatchApiResponse> Patch(string url, object dataToSend = null, string authToken = null);
     }
 }

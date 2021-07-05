@@ -1,6 +1,6 @@
-﻿namespace Clinic.Domain.Models.DTOs.Api
+﻿namespace Clinic.Domain.Models.Responses
 {
-    public class ApiReponseResultDTO<TData>
+    public class DefaultGetApiResponse<TData>
     {
         public int StatusCode { get; set; }
         public string Message { get; set; }
@@ -8,7 +8,7 @@
         public TData Data { get; set; }
         public Metadata Metadata { get; set; }
 
-        public ApiReponseResultDTO()
+        public DefaultGetApiResponse()
         {
             Success = false;
         }

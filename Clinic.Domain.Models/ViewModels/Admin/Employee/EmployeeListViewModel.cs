@@ -1,5 +1,5 @@
-﻿using Clinic.Domain.Models.DTOs.Api;
-using Clinic.Domain.Models.DTOs.Employee;
+﻿using Clinic.Domain.Models.DTOs.Employee;
+using Clinic.Domain.Models.Responses;
 using Clinic.Domain.QueryFilters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;

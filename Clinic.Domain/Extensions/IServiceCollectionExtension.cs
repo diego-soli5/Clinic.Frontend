@@ -8,6 +8,7 @@ using Clinic.CrossCutting.Helpers;
 using Clinic.Domain.Abstractions;
 using Clinic.Domain.Services;
 using System;
+using Clinic.CrossCutting.Routes;
 
 namespace Clinic.Domain.Extensions
 {
@@ -39,6 +40,13 @@ namespace Clinic.Domain.Extensions
         public static void AddDomainServices(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeService, EmployeeService>();
+        }
+
+        public static void AddRoutes(this IServiceCollection services)
+        {
+            services.AddSingleton(typeof(ApiRoutes));
+
+            services.AddSingleton(typeof(EmployeeRoutes));
         }
     }
 }
