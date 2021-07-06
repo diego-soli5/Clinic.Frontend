@@ -1,18 +1,45 @@
 ﻿//INICIA FUNCIONES SweetAlert
-function swalAlert(message, success) {
+function swalAlert(title, message, success) {
     if (success) {
         Swal.fire(
-            'Exito!',
+            title,
             message,
             'success'
         )
     }
     else {
         Swal.fire(
-            'Hubo un problema...',
+            title,
             message,
             'error'
         )
     }
+}
+
+function openRedirectionModal(title, url) {
+    let timerInterval
+    Swal.fire({
+        title: title,
+        html: 'Redireccionando en <b></b> milisegundos.',
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: () => {
+            Swal.showLoading()
+            timerInterval = setInterval(() => {
+                const content = Swal.getHtmlContainer()
+                if (content) {
+                    const b = content.querySelector('b')
+                    if (b) {
+                        b.textContent = Swal.getTimerLeft()
+                    }
+                }
+            }, 100)
+        },
+        willClose: () => {
+            clearInterval(timerInterval)
+        }
+    }).then((result) => {
+        window.location.href = url
+    });
 }
 //FIN FUNCIONES SweetAlert

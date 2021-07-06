@@ -39,7 +39,7 @@ namespace Clinic.CrossCutting.Helpers
             return new Uri(uri);
         }
 
-        public Uri CreateUri(string baseUri, Dictionary<string,object> queryStringParams)
+        public Uri AddQueryStringParams(string baseUri, Dictionary<string,object> queryStringParams)
         {
             string uri = $"{baseUri}?";
 

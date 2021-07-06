@@ -1,0 +1,116 @@
+﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeCreateViewModel
+@{
+    ViewData["Title"] = "Agregar Empleado";
+}
+
+<div class="border">
+    <h1 class="text-info text-center mt-2">Agregar Empleado</h1>
+    <div class="row">
+        <div class="container">
+            <div class="col-sm-12">
+                <form method="post" asp-area="Admin" asp-controller="Employee" asp-action="Create">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <h4>Información Personal</h4>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Identification"></label>
+                                <input asp-for="Employee.Person.Identification" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Identification" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Names"></label>
+                                <input asp-for="Employee.Person.Names" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Names" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Surnames"></label>
+                                <input asp-for="Employee.Person.Surnames" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Surnames" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Birthdate"></label>
+                                <input asp-for="Employee.Person.Birthdate" type="date" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Birthdate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Address"></label>
+                                <input asp-for="Employee.Person.Address" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Address" class="text-danger"></span>
+                            </div>
+
+                            <h4>Información del Empleado</h4>
+                            <div class="form-group">
+                                <label asp-for="Employee.EmployeeRole"></label>
+                                @Html.DropDownListFor(x => x.Employee.EmployeeRole, Model.SelectListEmployeeRole, "-Seleccionar-", new { @class = "form-control" })
+                                <span asp-validation-for="Employee.EmployeeRole" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <h4>Información de Contacto</h4>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.Email"></label>
+                                <input asp-for="Employee.Person.Email" class="form-control" />
+                                <span asp-validation-for="Employee.Person.Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.Person.PhoneNumber"></label>
+                                <input asp-for="Employee.Person.PhoneNumber" class="form-control" />
+                                <span asp-validation-for="Employee.Person.PhoneNumber" class="text-danger"></span>
+                            </div>
+
+                            <h4>Información de Cuenta</h4>
+                            <div class="form-group">
+                                <label asp-for="Employee.AppUser.UserName"></label>
+                                <input asp-for="Employee.AppUser.UserName" class="form-control" />
+                                <span asp-validation-for="Employee.AppUser.UserName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.AppUser.Password"></label>
+                                <input asp-for="Employee.AppUser.Password" class="form-control" />
+                                <span asp-validation-for="Employee.AppUser.Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.AppUser.PasswordConfirmation"></label>
+                                <input asp-for="Employee.AppUser.PasswordConfirmation" class="form-control" />
+                                <span asp-validation-for="Employee.AppUser.PasswordConfirmation" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Employee.AppUser.AppUserRole"></label> <br />
+                                <label><input type="radio" asp-for="Employee.AppUser.AppUserRole" value="0" /> Administrador</label> <br />
+                                <label><input type="radio" asp-for="Employee.AppUser.AppUserRole" value="1" /> Usuario</label> <br />
+                                <span asp-validation-for="Employee.AppUser.AppUserRole" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="submit" value="Agregar" class="btn btn-success btn-block" />
+                                </div>
+                                <div class="col-6">
+                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="btn btn-outline-info btn-block">Volver</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    @if (Model.Message?.Length > 0)
+    {
+
+        <script>
+            $(function () {
+                swalAlert("@Model.Message", false);
+            });
+        </script>
+
+    }
+}

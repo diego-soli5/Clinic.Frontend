@@ -8,6 +8,7 @@ namespace Clinic.Data.Abstractions
         Task<DefaultGetApiResponse<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null);
         Task<DefaultPostApiResponse> Post(string url,object dataToSend = null, string authToken = null);
         Task<DefaultPutApiResponse> Put(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultDeleteApiResponse> Delete(string url, object dataToSend = null, string authToken = null);
         Task<DefaultPatchApiResponse> Patch(string url, object dataToSend = null, string authToken = null);
     }
 }

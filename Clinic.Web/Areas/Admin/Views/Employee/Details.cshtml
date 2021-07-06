@@ -1,0 +1,145 @@
+﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeDetailsViewModel
+@{
+    ViewData["Title"] = "Detalles de Empleado";
+}
+
+
+<div class="border">
+    <h1 class="text-info text-center mt-2">Detalles Empleado</h1>
+    <div class="row">
+        <div class="container">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h4>Información Personal</h4>
+                        @Html.HiddenFor(x => x.Employee.Id)
+                        @Html.AntiForgeryToken()
+                        <div class="">
+                            <label asp-for="Employee.Person.Identification" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.Person.Identification, new { @class = "" })
+
+                        </div>
+                        <div class="">
+                            <label class="font-weight-bold">Nombre Completo:</label>
+                            @Html.DisplayFor(x => x.Employee.Person.FullName, new { @class = "" })
+
+                        </div>
+
+                        <div class="">
+                            <label asp-for="Employee.Person.Birthdate" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.Person.FormatedBirthdate, new { @class = "" })
+
+                        </div>
+                        <div class="">
+                            <label asp-for="Employee.Person.Address" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.Person.Address, new { @class = "" })
+
+                        </div>
+
+                        <h4>Información del Empleado</h4>
+                        <div class="">
+                            <label asp-for="Employee.EmployeeRole" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.EmployeeRole, new { @class = "" })
+
+                        </div>
+                        <div class="">
+                            <label asp-for="Employee.EmployeeStatus" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.EmployeeStatus, new { @class = "" })
+
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <h4>Información de Contacto</h4>
+                        <div class="">
+                            <label asp-for="Employee.Person.Email" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.Person.Email, new { @class = "" })
+
+                        </div>
+                        <div class="">
+                            <label asp-for="Employee.Person.PhoneNumber" class="font-weight-bold"></label>
+                            @Html.DisplayFor(x => x.Employee.Person.PhoneNumber, new { @class = "" })
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-danger btn-block" id="btnDelete">Elminar</button>
+                            </div>
+                            <div class="col-6">
+                                <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="btn btn-outline-info btn-block">Volver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    @if (Model.Message?.Length > 0)
+    {
+
+        <script>
+            $(function () {
+                swalAlert("@Model.Message", false);
+            });
+        </script>
+
+    }
+
+    <script>
+        $(function () {
+            document.getElementById("btnDelete").addEventListener("click", function () {
+                Swal.fire({
+                    title: 'Eliminar Empleado',
+                    text: "Estás seguro de realizar la acción? Si eliminas el recurso no podrás volver a consultarlo, para volver a reactivarlo se deberá cambiar el estado directamente de la base de datos.",
+                    icon: 'warning',
+                    input: 'text',
+                    inputPlaceholder: 'Escribe tu contraseña',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, estoy seguro.',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        let pass = result.value;
+                        let id = document.querySelector("#Employee_Id").value;
+                        let token = document.querySelector("[name=__RequestVerificationToken]").value;
+
+                        const dt = {
+                            headers: {
+                                'Accept': 'Application/json',
+                                'Content-Type': 'Application/json;charset=UTF-8',
+                                'X-Anti-Forgery-Token': token
+                            },
+                            method: 'POST',
+                            body: JSON.stringify({ password: pass })
+                        };
+
+                        fetch(`/api/admin/employee/delete/${id}`, dt)
+                            .then(res => res.json())
+                            .then(data => {
+                                debugger
+                                if (data.success) {
+                                    openRedirectionModal('Se eliminó correctamente!', '/admin/employee/index');
+                                } else {
+                                    swalAlert('Sin autorización', data.message, data.success);
+                                }
+
+                            }).catch(err => {
+                                swalAlert("Hubo un error desconocido, asegurate de tener conexión a internet.", false);
+                            });
+                    }
+                });
+            })
+        });
+    </script>
+}
+

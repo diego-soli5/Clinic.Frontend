@@ -115,7 +115,18 @@ namespace Clinic.Data.Repositories
                         defaultPostApiResponse.Message = okResponse.Message;
                     }
                 }
+                else if(httpResponseMessage.StatusCode == HttpStatusCode.Created)
+                {
+                    defaultPostApiResponse.Success = true;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
 
+                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                    defaultPostApiResponse.Message = badRequestResponse.Message;
+                }
 
                 return defaultPostApiResponse;
             }
@@ -198,6 +209,46 @@ namespace Clinic.Data.Repositories
                 }
 
                 return defaultPatchApiResponse;
+            }
+        }
+
+        public async Task<DefaultDeleteApiResponse> Delete(string url, object dataToSend = null, string authToken = null)
+        {
+            DefaultDeleteApiResponse defaultDeleteApiResponse = new DefaultDeleteApiResponse();
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, url);
+
+            if (dataToSend != null)
+            {
+                string json = JsonConvert.SerializeObject(dataToSend);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            using (var client = _clientFactory.CreateClient())
+            {
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                }
+
+                var httpResponseMessage = await client.SendAsync(request);
+
+                defaultDeleteApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+
+                if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
+                {
+                    defaultDeleteApiResponse.Success = true;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                    defaultDeleteApiResponse.Message = badRequestResponse.Message;
+                }
+
+                return defaultDeleteApiResponse;
             }
         }
     }

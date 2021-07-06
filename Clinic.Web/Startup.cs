@@ -35,6 +35,8 @@ namespace Clinic.Web
             services.AddRoutes();
 
             services.AddDomainServices();
+
+            services.AddAntiforgery(setup => setup.HeaderName = "X-Anti-Forgery-Token");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

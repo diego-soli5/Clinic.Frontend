@@ -70,7 +70,7 @@ $(function () {
                 let id = e.target.getAttribute("data-id");
 
                 Swal.fire({
-                    title: 'Despedir empleado?',
+                    title: 'Despedir Empleado',
                     text: "Estás seguro de realizar la acción?",
                     icon: 'warning',
                     showCancelButton: true,
@@ -119,10 +119,12 @@ $(function () {
                             .then(res => res.json())
                             .then(data => {
 
-                                swalAlert(data.message, data.success);
-
                                 if (data.success) {
+                                    swalAlert('Éxito!', data.message, data.success);
                                     getPaginatedPage(currentPage);
+                                }
+                                else {
+                                    swalAlert('Hubo un problema..', data.message, data.success);
                                 }
                
                             }).catch(err => {

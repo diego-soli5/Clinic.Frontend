@@ -17,7 +17,7 @@
             {
                 @foreach (var emp in Model.Employees)
                 {
-                    <tr class="border">
+                    <tr class="border pointer" onclick="window.location.href = '/admin/employee/details?id=@emp.Id'">
                         <td>
                             @emp.Identification
                         </td>
@@ -54,7 +54,7 @@
         </tbody>
     </table>
     <div class="col-sm-12">
-        <a href="#" class="btn btn-primary mb-2">Agregar nuevo</a>
+        <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-2">Agregar nuevo</a>
     </div>
     <div class="mr-auto ml-auto">
         @if (Model.Metadata.TotalCount > 0)

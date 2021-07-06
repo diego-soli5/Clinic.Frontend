@@ -12,7 +12,6 @@ namespace Clinic.CrossCutting.Routes
             _apiOptions = options.Value;
 
             Employee = $"{_apiOptions.Domain}/api/Employee";
-
         }
 
         public string Employee { get; private set; }

@@ -8,6 +8,6 @@ namespace Clinic.CrossCutting.Abstractions
     {
         Uri CreatePagedListUri<TQueryFilter>(string baseUri, TQueryFilter filter)
              where TQueryFilter : BaseQueryFilter;
-        Uri CreateUri(string baseUri, Dictionary<string, object> queryStringParams);
+        Uri AddQueryStringParams(string baseUri, Dictionary<string, object> queryStringParams);
     }
 }

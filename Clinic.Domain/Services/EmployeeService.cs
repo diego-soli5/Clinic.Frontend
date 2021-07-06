@@ -48,11 +48,29 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            url = _uriGenerator.CreateUri(url, new Dictionary<string, object> { { "isUpdate", true } }).ToString();
+            url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isUpdate", true } }).ToString();
 
             var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url);
 
             EmployeeEditViewModel oViewModel = new()
+            {
+                Employee = apiResponse.Data,
+                Message = apiResponse.Message,
+                Success = apiResponse.Success
+            };
+
+            return oViewModel;
+        }
+
+        public async Task<EmployeeDetailsViewModel> GetByIdAsync(int id)
+        {
+            string url = $"{_employeeRoutes.Employee}/{id}";
+
+            url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isToUpdate", false } }).ToString();
+
+            var apiResponse = await _repository.Get<EmployeeDTO>(url);
+
+            EmployeeDetailsViewModel oViewModel = new()
             {
                 Employee = apiResponse.Data,
                 Message = apiResponse.Message,
@@ -67,6 +85,20 @@ namespace Clinic.Domain.Services
             string url = $"{_employeeRoutes.Employee}/{model.Id}";
 
             return await _repository.Put(url, model);
+        }
+
+        public async Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model)
+        {
+            string url = _employeeRoutes.Employee;
+
+            return await _repository.Post(url, model);
+        }
+
+        public async Task<DefaultDeleteApiResponse> DeleteAsync(int id, string password)
+        {
+            string url = $"{_employeeRoutes.Employee}/{id}";
+
+            return await _repository.Delete(url, new { password });
         }
 
         public async Task<DefaultPatchApiResponse> Fire(int id)

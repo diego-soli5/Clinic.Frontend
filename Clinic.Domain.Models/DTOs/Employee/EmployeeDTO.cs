@@ -11,15 +11,13 @@ namespace Clinic.Domain.Models.DTOs.Employee
         public int Id { get; set; }
 
         [Display(Name = "Tipo de Empleado")]
-        [Required(ErrorMessage = "El campo es obligatorio.")]
         public EmployeeRole EmployeeRole { get; set; }
 
+        [Display(Name = "Estado del Empleado:")]
         public EmployeeStatus EmployeeStatus { get; set; }
 
-        [Display(Name = "Fecha de Contratacion")]
+        [Display(Name = "Fecha de Contratacion:")]
         public DateTime HireDate { get; set; }
-
-        public AppUserDTO AppUser { get; set; }
 
         public PersonDTO Person { get; set; }
     }
