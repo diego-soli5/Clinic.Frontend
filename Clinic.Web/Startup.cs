@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Clinic.Domain.Extensions;
 using Clinic.CrossCutting.Routes;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System;
 
 namespace Clinic.Web
 {
@@ -37,6 +39,16 @@ namespace Clinic.Web
             services.AddDomainServices();
 
             services.AddAntiforgery(setup => setup.HeaderName = "X-Anti-Forgery-Token");
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, config =>
+                {
+                    config.Cookie.Name = "App.Auth";
+                    config.LoginPath = "/Account/Login";
+                    config.AccessDeniedPath = "/Account/Unauthorized";
+                    config.LogoutPath = "/Account/Logout";
+                    config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +68,8 @@ namespace Clinic.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Sistema de Clinica, Desarrollado por Luis Diego Solís Camacho." />
+    <title>Clinica - Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <section class="col-sm-6 offset-3 mt-5">
+                @if (ViewData["LoginMessage"] != null)
+                {
+                    <div class="alert alert-dismissible fade show alert-danger mb-3" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <p class="mb-0">@ViewData["LoginMessage"].ToString()</p>
+                    </div>
+                }
+
+                <article class="card mr-auto ml-auto">
+                    <header class="card-header bg-success">
+                        <h1 class="text-center font-weight-normal text-light">Clinica</h1>
+                    </header>
+                    <form method="post" asp-area="" asp-controller="Account" asp-action="Login" class="card-body" id="frm">
+                        <input type="text" name="credential" value="" placeholder="Identificación o Correo Electrónico" class="form-control mb-3" />
+                        <input type="password" name="password" value="" placeholder="Contraseña" class="form-control" />
+                        <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                    </form>
+                    <footer class="card-footer">
+                        <button class="btn btn-success btn-block" type="submit" form="frm">Iniciar Sesión</button>
+                    </footer>
+                </article>
+            </section>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

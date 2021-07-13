@@ -17,7 +17,10 @@
             {
                 @foreach (var emp in Model.Employees)
                 {
-                    <tr class="border pointer" onclick="window.location.href = '/admin/employee/details?id=@emp.Id'">
+                    <tr class="border pointer">
+
+                        <input type="hidden" name="hdId" value="@emp.Id" />
+
                         <td>
                             @emp.Identification
                         </td>

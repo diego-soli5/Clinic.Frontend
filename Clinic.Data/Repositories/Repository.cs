@@ -74,6 +74,14 @@ namespace Clinic.Data.Repositories
                         defaultGetApiResponse.Message = notFoundResponse.Message;
                     }
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    defaultGetApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    defaultGetApiResponse.Message = $"El servidor respondió con un código de estado {defaultGetApiResponse.StatusCode}.";
+                }
 
                 return defaultGetApiResponse;
             }
@@ -127,8 +135,96 @@ namespace Clinic.Data.Repositories
 
                     defaultPostApiResponse.Message = badRequestResponse.Message;
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
+
+                    defaultPostApiResponse.Message = unauthorizedResponse.Message;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    defaultPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    defaultPostApiResponse.Message = $"El servidor respondió con un código de estado {defaultPostApiResponse.StatusCode}.";
+                }
 
                 return defaultPostApiResponse;
+            }
+        }
+
+        public async Task<DataPostApiResponse<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null)
+        {
+            DataPostApiResponse<TData> dataPostApiResponse = new DataPostApiResponse<TData>();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+            if (dataToSend != null)
+            {
+                string json = JsonConvert.SerializeObject(dataToSend);
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            using (var client = _clientFactory.CreateClient())
+            {
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                }
+
+                var httpResponseMessage = await client.SendAsync(request);
+
+                dataPostApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+
+                if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+                {
+                    dataPostApiResponse.Success = true;
+
+                    if (httpResponseMessage.Content != null)
+                    {
+                        string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                        var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
+
+                        if(okResponse.Data != null)
+                            dataPostApiResponse.Data = JsonConvert.DeserializeObject<TData>(okResponse.Data.ToString());
+
+                        dataPostApiResponse.Message = okResponse.Message;
+                    }
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
+                {
+                    dataPostApiResponse.Success = true;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                    dataPostApiResponse.Message = badRequestResponse.Message;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
+
+                    dataPostApiResponse.Message = unauthorizedResponse.Message;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    dataPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    dataPostApiResponse.Message = $"El servidor respondió con un código de estado {dataPostApiResponse.StatusCode}.";
+                }
+
+                return dataPostApiResponse;
             }
         }
 
@@ -166,6 +262,14 @@ namespace Clinic.Data.Repositories
                     var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
 
                     defaultPutApiResponse.Message = badRequestResponse.Message;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    defaultPutApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    defaultPutApiResponse.Message = $"El servidor respondió con un código de estado {defaultPutApiResponse.StatusCode}.";
                 }
 
                 return defaultPutApiResponse;
@@ -207,6 +311,14 @@ namespace Clinic.Data.Repositories
 
                     defaultPatchApiResponse.Message = badRequestResponse.Message;
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    defaultPatchApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    defaultPatchApiResponse.Message = $"El servidor respondió con un código de estado {defaultPatchApiResponse.StatusCode}.";
+                }
 
                 return defaultPatchApiResponse;
             }
@@ -246,6 +358,14 @@ namespace Clinic.Data.Repositories
                     var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
 
                     defaultDeleteApiResponse.Message = badRequestResponse.Message;
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                {
+                    defaultDeleteApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else
+                {
+                    defaultDeleteApiResponse.Message = $"El servidor respondió con un código de estado {defaultDeleteApiResponse.StatusCode}.";
                 }
 
                 return defaultDeleteApiResponse;

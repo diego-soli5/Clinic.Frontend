@@ -63,10 +63,21 @@ $(function () {
     bindPaginationEvts();
     //FIN PAGINACION
 
-    //INICIA BOTONES FIRE & ACTIVATE
+    //INICIA BOTONES CRUD & FIRE & ACTIVATE
     function bindCRUDevts() {
+
+        document.querySelectorAll('tbody tr.pointer').forEach(x => {
+            x.addEventListener('click', function (e) {
+                let id = e.currentTarget.firstElementChild.value;
+
+                window.location.href = `/Admin/Employee/Details?id=${id}`;
+            });
+        });
+
         document.querySelectorAll("#btnFire").forEach(x => {
             x.addEventListener("click", function (e) {
+                e.stopPropagation();
+
                 let id = e.target.getAttribute("data-id");
 
                 Swal.fire({
@@ -101,6 +112,8 @@ $(function () {
 
         document.querySelectorAll("#btnActivate").forEach(x => {
             x.addEventListener("click", function (e) {
+                e.stopPropagation();
+                
                 let id = e.target.getAttribute("data-id");
 
                 Swal.fire({

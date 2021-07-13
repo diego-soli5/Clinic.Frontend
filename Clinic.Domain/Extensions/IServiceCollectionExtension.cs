@@ -40,6 +40,8 @@ namespace Clinic.Domain.Extensions
         public static void AddDomainServices(this IServiceCollection services)
         {
             services.AddScoped<IEmployeeService, EmployeeService>();
+
+            services.AddScoped<IAccountService, AccountService>();
         }
 
         public static void AddRoutes(this IServiceCollection services)
@@ -47,6 +49,9 @@ namespace Clinic.Domain.Extensions
             services.AddSingleton(typeof(ApiRoutes));
 
             services.AddSingleton(typeof(EmployeeRoutes));
+
+            services.AddSingleton(typeof(AccountRoutes));
+
         }
     }
 }
