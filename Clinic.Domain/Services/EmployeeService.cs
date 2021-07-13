@@ -25,13 +25,13 @@ namespace Clinic.Domain.Services
             _uriGenerator = uriGenerator;
         }
 
-        public async Task<EmployeeListViewModel> GetAllAsync(EmployeeQueryFilter filters)
+        public async Task<EmployeeListViewModel> GetAllAsync(EmployeeQueryFilter filters, string token)
         {
             EmployeeCache.GetEmployeeQueryFilterCache(filters);
 
             string url = _uriGenerator.CreatePagedListUri(_employeeRoutes.Employee, filters).ToString();
 
-            var apiResponse = await _repository.Get<IEnumerable<EmployeeListDTO>>(url);
+            var apiResponse = await _repository.Get<IEnumerable<EmployeeListDTO>>(url, authToken: token);
 
             EmployeeCache.SetEmployeeQueryFilterCache(filters);
 
@@ -44,13 +44,13 @@ namespace Clinic.Domain.Services
             return oViewModel;
         }
 
-        public async Task<EmployeeEditViewModel> GetByIdToUpdateAsync(int id)
+        public async Task<EmployeeEditViewModel> GetByIdToUpdateAsync(int id, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
             url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isUpdate", true } }).ToString();
 
-            var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url);
+            var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url, authToken: token);
 
             EmployeeEditViewModel oViewModel = new()
             {
@@ -62,13 +62,13 @@ namespace Clinic.Domain.Services
             return oViewModel;
         }
 
-        public async Task<EmployeeDetailsViewModel> GetByIdAsync(int id)
+        public async Task<EmployeeDetailsViewModel> GetByIdAsync(int id, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
             url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isToUpdate", false } }).ToString();
 
-            var apiResponse = await _repository.Get<EmployeeDTO>(url);
+            var apiResponse = await _repository.Get<EmployeeDTO>(url, authToken: token);
 
             EmployeeDetailsViewModel oViewModel = new()
             {
@@ -80,39 +80,39 @@ namespace Clinic.Domain.Services
             return oViewModel;
         }
 
-        public async Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model)
+        public async Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{model.Id}";
 
-            return await _repository.Put(url, model);
+            return await _repository.Put(url, model, token);
         }
 
-        public async Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model)
+        public async Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model, string token)
         {
             string url = _employeeRoutes.Employee;
 
-            return await _repository.Post(url, model);
+            return await _repository.Post(url, model, token);
         }
 
-        public async Task<DefaultDeleteApiResponse> DeleteAsync(int id, string password)
+        public async Task<DefaultDeleteApiResponse> DeleteAsync(int id, string password, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            return await _repository.Delete(url, new { password });
+            return await _repository.Delete(url, new { password }, token);
         }
 
-        public async Task<DefaultPatchApiResponse> Fire(int id)
+        public async Task<DefaultPatchApiResponse> Fire(int id, string token)
         {
             string url = _employeeRoutes.Fire + id;
 
-            return await _repository.Patch(url);
+            return await _repository.Patch(url, authToken: token);
         }
 
-        public async Task<DefaultPatchApiResponse> Activate(int id)
+        public async Task<DefaultPatchApiResponse> Activate(int id, string token)
         {
             string url = _employeeRoutes.Activate + id;
 
-            return await _repository.Patch(url);
+            return await _repository.Patch(url, authToken: token);
         }
     }
 }

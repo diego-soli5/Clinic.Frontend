@@ -41,9 +41,28 @@
                         <button class="btn btn-success btn-block" type="submit" form="frm">Iniciar Sesión</button>
                     </footer>
                 </article>
+
+                <div class="ml-auto mr-auto mt-5">
+                    <form method="post" asp-area="" asp-controller="Account" asp-action="Login">
+                        <input type="hidden" name="credential" value="117310010" />
+                        <input type="hidden" name="password" value="123" />
+                        <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                        <input type="submit" name="name" value="Ingresar como Admin" class="btn btn-dark" />
+                    </form>
+
+                    <form method="post" asp-area="" asp-controller="Account" asp-action="Login">
+                        <input type="hidden" name="credential" value="988310010" />
+                        <input type="hidden" name="password" value="123" />
+                        <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
+                        <input type="submit" name="name" value="Ingresar como User" class="btn btn-dark" />
+                    </form>
+                </div>
+
             </section>
         </div>
     </div>
+
+    
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

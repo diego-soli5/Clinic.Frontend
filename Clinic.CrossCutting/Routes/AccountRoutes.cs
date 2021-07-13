@@ -16,7 +16,7 @@ namespace Clinic.CrossCutting.Routes
         {
             _apiOptions = options.Value;
 
-            Account = $"{_apiOptions.Domain}/api/Account";
+            Account = $"{_apiOptions.Domain}/api/{nameof(Account)}";
         }
 
         public string Account { get; private set; }
@@ -25,7 +25,15 @@ namespace Clinic.CrossCutting.Routes
         {
             get
             {
-                return Account + "/Authenticate";
+                return $"{Account}/{nameof(Authenticate)}";
+            }
+        }
+
+        public string Logout
+        {
+            get
+            {
+                return $"{Account}/{nameof(Logout)}";
             }
         }
 
@@ -33,7 +41,7 @@ namespace Clinic.CrossCutting.Routes
         {
             get
             {
-                return Account + "/PasswordChangeRequest";
+                return $"{Account}/{nameof(PasswordChangeRequest)}";
             }
         }
 
@@ -41,7 +49,7 @@ namespace Clinic.CrossCutting.Routes
         {
             get
             {
-                return Account + "/ChangePassword";
+                return $"{Account}/{nameof(ChangePassword)}";
             }
         }
     }

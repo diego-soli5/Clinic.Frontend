@@ -1,4 +1,5 @@
 ﻿using Clinic.Domain.Abstractions;
+using Clinic.Domain.Filters;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace Clinic.Web.Controllers
         }
 
         [HttpGet]
+        [IsAlreadyAuthenticatedFilter]
         public IActionResult Login(string returnUrl)
         {
             if (returnUrl != null)
@@ -62,6 +64,20 @@ namespace Clinic.Web.Controllers
 
             ViewData["LoginMessage"] = result.Message;
 
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet]
+        public IActionResult Unauthorizedv()
+        {
             return View();
         }
     }

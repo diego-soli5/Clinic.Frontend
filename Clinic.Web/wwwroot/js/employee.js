@@ -95,8 +95,8 @@ $(function () {
                         fetch(`/api/admin/employee/fire/${id}`, { method: 'POST' })
                             .then(res => res.json())
                             .then(data => {
-
-                                swalAlert(data.message, data.success);
+                               
+                                swalAlert('Despedir', data.message, data.success);
 
                                 if (data.success) {
                                     getPaginatedPage(currentPage);
@@ -132,12 +132,10 @@ $(function () {
                             .then(res => res.json())
                             .then(data => {
 
+                                swalAlert('Activar', data.message, data.success);
+
                                 if (data.success) {
-                                    swalAlert('Éxito!', data.message, data.success);
                                     getPaginatedPage(currentPage);
-                                }
-                                else {
-                                    swalAlert('Hubo un problema..', data.message, data.success);
                                 }
                
                             }).catch(err => {

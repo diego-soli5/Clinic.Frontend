@@ -9,6 +9,7 @@ using Clinic.Domain.Abstractions;
 using Clinic.Domain.Services;
 using System;
 using Clinic.CrossCutting.Routes;
+using Clinic.Domain.Filters;
 
 namespace Clinic.Domain.Extensions
 {

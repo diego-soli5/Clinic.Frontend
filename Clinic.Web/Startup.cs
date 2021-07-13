@@ -7,6 +7,7 @@ using Clinic.Domain.Extensions;
 using Clinic.CrossCutting.Routes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
+using Clinic.Domain.Filters;
 
 namespace Clinic.Web
 {
@@ -45,7 +46,7 @@ namespace Clinic.Web
                 {
                     config.Cookie.Name = "App.Auth";
                     config.LoginPath = "/Account/Login";
-                    config.AccessDeniedPath = "/Account/Unauthorized";
+                    config.AccessDeniedPath = "/Account/Unauthorizedv";
                     config.LogoutPath = "/Account/Logout";
                     config.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 });

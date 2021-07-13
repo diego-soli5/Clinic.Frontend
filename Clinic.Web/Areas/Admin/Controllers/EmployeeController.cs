@@ -3,15 +3,19 @@ using Clinic.Domain.Models.DTOs.Employee;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
 using Clinic.Domain.QueryFilters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = nameof(AppUserRole.Administrator))]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
@@ -24,7 +28,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var oVM = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active));
+            var oVM = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active), GetCurrentToken());
 
             return View(oVM);
         }
@@ -50,7 +54,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return View(oVM);
             }
 
-            var response = await _employeeService.CreateAsync(model);
+            var response = await _employeeService.CreateAsync(model, GetCurrentToken());
 
             if (response.Success)
             {
@@ -70,7 +74,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var oVM = await _employeeService.GetByIdToUpdateAsync(id);
+            var oVM = await _employeeService.GetByIdToUpdateAsync(id, GetCurrentToken());
 
             if (!oVM.Success)
                 return NotFound();
@@ -91,7 +95,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return View(oVM);
             }
 
-            var response = await _employeeService.UpdateAsync(model);
+            var response = await _employeeService.UpdateAsync(model, GetCurrentToken());
 
             if (response.Success)
             {
@@ -111,7 +115,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var oVM = await _employeeService.GetByIdAsync(id);
+            var oVM = await _employeeService.GetByIdAsync(id, GetCurrentToken());
 
             return View(oVM);
         }
@@ -119,7 +123,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTable(EmployeeQueryFilter filter)
         {
-            var oVM = await _employeeService.GetAllAsync(filter);
+            var oVM = await _employeeService.GetAllAsync(filter, GetCurrentToken());
 
             return PartialView("_EmployeePagedTablePartial", oVM);
         }
@@ -129,7 +133,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [Route("api/admin/employee/fire/{id}")]
         public async Task<IActionResult> Fire(int id)
         {
-            var response = await _employeeService.Fire(id);
+            var response = await _employeeService.Fire(id, GetCurrentToken());
 
             if (response.StatusCode == StatusCodes.Status204NoContent)
             {
@@ -155,7 +159,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [Route("api/admin/employee/activate/{id}")]
         public async Task<IActionResult> Activate(int id)
         {
-            var response = await _employeeService.Activate(id);
+            var response = await _employeeService.Activate(id, GetCurrentToken());
 
             if (response.StatusCode == StatusCodes.Status204NoContent)
             {
@@ -180,9 +184,9 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpPost]
         [Route("api/admin/employee/delete/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, [FromBody]EmployeeDeleteDTO model)
+        public async Task<IActionResult> Delete(int id, [FromBody] EmployeeDeleteDTO model)
         {
-            var response = await _employeeService.DeleteAsync(id, model.Password);
+            var response = await _employeeService.DeleteAsync(id, model.Password, GetCurrentToken());
 
             if (response.StatusCode == StatusCodes.Status204NoContent)
             {
@@ -194,9 +198,16 @@ namespace Clinic.Web.Areas.Admin.Controllers
             }
             else
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
         #endregion
+
+        private string GetCurrentToken()
+        {
+            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
+
+            return token;
+        }
     }
 }
