@@ -1,4 +1,5 @@
-﻿using Clinic.Domain.Abstractions;
+﻿using Clinic.CrossCutting.CustomExceptions;
+using Clinic.Domain.Abstractions;
 using Clinic.Domain.Models.DTOs.Employee;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;

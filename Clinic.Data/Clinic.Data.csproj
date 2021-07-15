@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Clinic.CrossCutting\Clinic.CrossCutting.csproj" />
     <ProjectReference Include="..\Clinic.Domain.Models\Clinic.Domain.Models.csproj" />
   </ItemGroup>
 

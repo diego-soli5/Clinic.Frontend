@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Models.Responses.Api;
+using Clinic.CrossCutting.CustomExceptions;
 
 namespace Clinic.Data.Repositories
 {
@@ -78,6 +79,10 @@ namespace Clinic.Data.Repositories
                 {
                     defaultGetApiResponse.Message = "Ocurrió un error interno en el servidor.";
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedException();
+                }
                 else
                 {
                     defaultGetApiResponse.Message = $"El servidor respondió con un código de estado {defaultGetApiResponse.StatusCode}.";
@@ -137,11 +142,11 @@ namespace Clinic.Data.Repositories
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+                    //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+                    //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
+                    //defaultPostApiResponse.Message = unauthorizedResponse.Message;
 
-                    var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
-
-                    defaultPostApiResponse.Message = unauthorizedResponse.Message;
+                    throw new UnauthorizedException();
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
                 {
@@ -209,11 +214,11 @@ namespace Clinic.Data.Repositories
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+                    //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+                    //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
+                    //dataPostApiResponse.Message = unauthorizedResponse.Message;
 
-                    var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
-
-                    dataPostApiResponse.Message = unauthorizedResponse.Message;
+                    throw new UnauthorizedException();
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
                 {
@@ -267,6 +272,10 @@ namespace Clinic.Data.Repositories
                 {
                     defaultPutApiResponse.Message = "Ocurrió un error interno en el servidor.";
                 }
+                else if(httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedException();
+                }
                 else
                 {
                     defaultPutApiResponse.Message = $"El servidor respondió con un código de estado {defaultPutApiResponse.StatusCode}.";
@@ -315,6 +324,10 @@ namespace Clinic.Data.Repositories
                 {
                     defaultPatchApiResponse.Message = "Ocurrió un error interno en el servidor.";
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedException();
+                }
                 else
                 {
                     defaultPatchApiResponse.Message = $"El servidor respondió con un código de estado {defaultPatchApiResponse.StatusCode}.";
@@ -362,6 +375,10 @@ namespace Clinic.Data.Repositories
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     defaultDeleteApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedException();
                 }
                 else
                 {

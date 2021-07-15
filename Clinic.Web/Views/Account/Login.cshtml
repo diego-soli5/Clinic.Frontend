@@ -16,6 +16,7 @@
 <body>
 
     <div class="container">
+       
         <div class="row">
             <section class="col-sm-6 offset-3 mt-5">
                 @if (ViewData["LoginMessage"] != null)
@@ -25,6 +26,16 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                         <p class="mb-0">@ViewData["LoginMessage"].ToString()</p>
+                    </div>
+                }
+
+                @if (TempData["Sesion"] != null)
+                {
+                    <div class="alert alert-dismissible fade show alert-warning mb-3" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <p class="mb-0">@TempData["Sesion"].ToString()</p>
                     </div>
                 }
 
