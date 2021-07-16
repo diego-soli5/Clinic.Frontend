@@ -1,18 +1,17 @@
-﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeIndexViewModel
+﻿@model Clinic.Domain.Models.ViewModels.Client.Medic.MedicIndexViewModel
 @{
-    ViewData["Title"] = "Empleados";
+    ViewData["Title"] = "Médicos";
 }
 
-@if (TempData["EmployeeMessage"] != null)
+@if (TempData["MedicMessage"] != null)
 {
     <div class="alert alert-dismissible fade show alert-success mb-3" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="alert-heading">Exito!</h4>
-        <p class="mb-0">@TempData["EmployeeMessage"].ToString()</p>
+        <p class="mb-0">@TempData["MedicMessage"].ToString()</p>
     </div>
-
 }
 
 <div class="border p-2">
@@ -25,23 +24,24 @@
                     <input asp-for="QueryFilters.Identification" id="identification" class="form-control" />
                 </div>
             </div>
+
             <div class="col-sm-6">
                 <div class="form-group">
-                    <label asp-for="QueryFilters.EmployeeStatus"></label>
-                    @Html.DropDownList(nameof(Model.QueryFilters.EmployeeStatus), Model.SelectListEmployeeStatus, "Todos", new { @class = "form-control" })
+                    <label asp-for="MedicSpecialties"></label>
+                    @Html.DropDownList(nameof(Model.MedicSpecialties), Model.MedicSpecialties, "Todos", new { @class = "form-control", id = "medicalSpecialty" })
                 </div>
             </div>
+            
             <div class="col-sm-3 mb-3">
                 <input type="submit" value="Buscar" class="btn btn-outline-primary btn-block form-control" />
             </div>
         </form>
     </div>
-    <div class="col-sm-12" id="tblEmployees">
-        @{ await Html.RenderPartialAsync("_EmployeePagedTablePartial", Model); }
+    <div class="col-sm-12" id="tblMedics">
+        @{ await Html.RenderPartialAsync("_MedicPagedTablePartial", Model); }
     </div>
 </div>
 
 @section Scripts{
-    <script src="~/js/employee.js"></script>
+    <script src="~/js/medic.js"></script>
 }
-

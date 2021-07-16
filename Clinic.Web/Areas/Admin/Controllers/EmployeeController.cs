@@ -2,8 +2,8 @@
 using Clinic.Domain.Abstractions;
 using Clinic.Domain.Models.DTOs.Employee;
 using Clinic.Domain.Models.Enumerations;
+using Clinic.Domain.Models.QueryFilters;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
-using Clinic.Domain.QueryFilters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -204,11 +204,13 @@ namespace Clinic.Web.Areas.Admin.Controllers
         }
         #endregion
 
+        #region UTILITY METHODS
         private string GetCurrentToken()
         {
             string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
 
             return token;
         }
+        #endregion
     }
 }

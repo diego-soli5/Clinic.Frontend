@@ -1,4 +1,4 @@
-﻿using Clinic.Domain.QueryFilters;
+﻿using Clinic.Domain.Models.QueryFilters;
 
 namespace Clinic.CrossCutting.Cache
 {

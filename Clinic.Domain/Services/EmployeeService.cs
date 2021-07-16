@@ -4,11 +4,11 @@ using Clinic.Domain.Models.DTOs.Employee;
 using Clinic.CrossCutting.Routes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Clinic.Domain.QueryFilters;
 using Clinic.CrossCutting.Abstractions;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
 using Clinic.CrossCutting.Cache;
 using Clinic.Domain.Models.Responses;
+using Clinic.Domain.Models.QueryFilters;
 
 namespace Clinic.Domain.Services
 {
@@ -25,7 +25,7 @@ namespace Clinic.Domain.Services
             _uriGenerator = uriGenerator;
         }
 
-        public async Task<EmployeeListViewModel> GetAllAsync(EmployeeQueryFilter filters, string token)
+        public async Task<EmployeeIndexViewModel> GetAllAsync(EmployeeQueryFilter filters, string token)
         {
             EmployeeCache.GetEmployeeQueryFilterCache(filters);
 
@@ -35,7 +35,7 @@ namespace Clinic.Domain.Services
 
             EmployeeCache.SetEmployeeQueryFilterCache(filters);
 
-            var oViewModel = new EmployeeListViewModel
+            var oViewModel = new EmployeeIndexViewModel
             {
                 Employees = apiResponse.Data,
                 Metadata = apiResponse.Metadata

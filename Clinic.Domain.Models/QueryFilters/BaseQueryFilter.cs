@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clinic.Domain.QueryFilters
+namespace Clinic.Domain.Models.QueryFilters
 {
     public class BaseQueryFilter
     {

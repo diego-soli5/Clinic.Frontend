@@ -16,7 +16,7 @@ namespace Clinic.Domain.Models.DTOs.AppUser
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Display(Name = "Confirmarción de Contraseña")]
+        [Display(Name = "Confirmación de Contraseña")]
         [Required(ErrorMessage = "El campo es obligatorio.")]
         [DataType(DataType.Password)]
         [Compare(nameof(Password),ErrorMessage = "La confirmación de contraseña debe ser igual a la contraseña.")]

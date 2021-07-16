@@ -1,6 +1,6 @@
 ﻿using Clinic.CrossCutting.Abstractions;
 using Clinic.CrossCutting.Options;
-using Clinic.Domain.QueryFilters;
+using Clinic.Domain.Models.QueryFilters;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;

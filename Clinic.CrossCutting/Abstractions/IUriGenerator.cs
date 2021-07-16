@@ -1,4 +1,4 @@
-﻿using Clinic.Domain.QueryFilters;
+﻿using Clinic.Domain.Models.QueryFilters;
 using System;
 using System.Collections.Generic;
 

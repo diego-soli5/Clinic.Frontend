@@ -1,4 +1,4 @@
-﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeIndexViewModel
+﻿@model Clinic.Domain.Models.ViewModels.Client.Medic.MedicIndexViewModel
 
 <div class="row">
     <table class="table table-hover table-responsive-sm table-responsive-md">
@@ -6,42 +6,26 @@
             <tr>
                 <th>Identificación</th>
                 <th>Nombre Completo</th>
-                <th>Fecha de Contratación</th>
-                <th>Tipo de Empleado</th>
-                <th>Estado</th>
+                <th>Especialidad</th>
                 <th class="text-center">Acciones</th>
             </tr>
         </thead>
         <tbody>
             @if (Model.Metadata.TotalCount > 0)
             {
-                @foreach (var emp in Model.Employees)
+                @foreach (var med in Model.Medics)
                 {
-                    <tr class="border pointer">
+                    <tr class="border">
 
-                        <input type="hidden" name="hdId" value="@emp.Id" />
+                        <input type="hidden" name="hdId" value="@med.Id" />
 
-                        <td>
-                            @emp.Identification
-                        </td>
-                        <td>@emp.FullName</td>
-                        <td>@emp.HireDate.ToShortDateString()</td>
-                        <td>@emp.EmployeeRole.ToString()</td>
-                        <td>@emp.EmployeeStatus.ToString()</td>
+                        <td>@med.Identification</td>
+                        <td>@med.FullName</td>
+                        <td>@med.MedicalSpecialtyName</td>
                         <td>
                             <div class="row">
-                                <div class="col-xl-6">
-                                    @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
-                                    {
-                                        <button class="btn btn-info btn-block" data-id="@emp.Id" id="btnActivate">Activar</button>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-danger btn-block" data-id="@emp.Id" id="btnFire">Despedir</button>
-                                    }
-                                </div>
-                                <div class="col-xl-6">
-                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block">Editar</a>
+                                <div class="col-xl-12">
+                                    <a asp-area="Client" asp-controller="Medic" asp-action="Edit" asp-route-id="@med.Id" class="btn btn-success btn-block">Editar</a>
                                 </div>
                             </div>
                         </td>
@@ -51,13 +35,13 @@
             else
             {
                 <tr>
-                    <td colspan="6" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
+                    <td colspan="3" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
                 </tr>
             }
         </tbody>
     </table>
     <div class="col-sm-12">
-        <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-2">Agregar nuevo</a>
+        <a asp-area="client" asp-controller="Medic" asp-action="Create" class="btn btn-primary mb-2">Agregar nuevo</a>
     </div>
     <div class="mr-auto ml-auto">
         @if (Model.Metadata.TotalCount > 0)
@@ -90,4 +74,5 @@
         }
     </div>
 </div>
+
 

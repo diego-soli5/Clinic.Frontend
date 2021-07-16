@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Clinic.Domain.QueryFilters
+namespace Clinic.Domain.Models.QueryFilters
 {
     public class EmployeeQueryFilter : BaseQueryFilter
     {
