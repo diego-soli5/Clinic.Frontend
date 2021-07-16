@@ -12,6 +12,5 @@ namespace Clinic.Domain.Models.DTOs.Medic
         public int Identification { get; set; }
         public string FullName { get; set; }
         public string MedicalSpecialtyName { get; set; }
-        public bool MustUpdateInfo { get; set; }
     }
 }

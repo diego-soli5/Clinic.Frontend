@@ -21,7 +21,7 @@ namespace Clinic.CrossCutting.Routes
         {
             get
             {
-                return $"{nameof(Medic)}/{nameof(Specialties)}";
+                return $"{Medic}/{nameof(Specialties)}";
             }
         }
     }

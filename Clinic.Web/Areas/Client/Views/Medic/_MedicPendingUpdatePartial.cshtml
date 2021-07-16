@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Clinic.Domain.Models.DTOs.Medic.MedicPendingForUpdateDTO>
+
+<div class="row">
+    <h3 class="text-warning">Pendientes de Actualización de Información</h3>
+    @foreach (var med in Model)
+    {
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@med.FullName</h5>
+                    <p class="card-text">@med.Identification</p>
+                    <a asp-area="Client" asp-controller="Medic" asp-action="UpdateInfo" asp-route-id="@med.EmployeeId" class="btn btn-primary">Actualizar Información</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

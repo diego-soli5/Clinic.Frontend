@@ -73,6 +73,11 @@
             </nav>
         }
     </div>
+
+    <div id="vwPendingUpdate">
+        @{ await Html.RenderPartialAsync("_MedicPendingUpdatePartial", Model.MedicsPendingForUpdate); }
+    </div>
+
 </div>
 
 

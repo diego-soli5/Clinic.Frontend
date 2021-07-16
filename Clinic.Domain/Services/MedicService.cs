@@ -60,5 +60,18 @@ namespace Clinic.Domain.Services
 
             return viewModel;
         }
+
+        public async Task<IEnumerable<MedicPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken)
+        {
+            string url = _uriGenerator.AddQueryStringParams(_medicRoutes.Medic,
+                new Dictionary<string, object>
+                {
+                    { "PendingUpdate", true }
+                }).ToString();
+
+            var response = await _repository.Get<IEnumerable<MedicPendingForUpdateDTO>>(url, authToken: authToken);
+
+            return response.Data;
+        }
     }
 }
