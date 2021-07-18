@@ -1,7 +1,7 @@
 ﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeIndexViewModel
 
 <div class="row">
-    <table class="table table-hover table-responsive-sm table-responsive-md">
+    <table class="table table-sm table-bordered table-hover table-responsive-sm table-responsive-md">
         <thead>
             <tr>
                 <th>Identificación</th>
@@ -33,15 +33,15 @@
                                 <div class="col-xl-6">
                                     @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
                                     {
-                                        <button class="btn btn-info btn-block" data-id="@emp.Id" id="btnActivate">Activar</button>
+                                        <button class="btn btn-info btn-block btn-sm" data-id="@emp.Id" id="btnActivate">Activar</button>
                                     }
                                     else
                                     {
-                                        <button class="btn btn-danger btn-block" data-id="@emp.Id" id="btnFire">Despedir</button>
+                                        <button class="btn btn-danger btn-block btn-sm" data-id="@emp.Id" id="btnFire">Despedir</button>
                                     }
                                 </div>
                                 <div class="col-xl-6">
-                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block">Editar</a>
+                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block btn-sm">Editar</a>
                                 </div>
                             </div>
                         </td>
@@ -57,7 +57,7 @@
         </tbody>
     </table>
     <div class="col-sm-12">
-        <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-2">Agregar nuevo</a>
+        <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-2">Agregar Nuevo</a>
     </div>
     <div class="mr-auto ml-auto">
         @if (Model.Metadata.TotalCount > 0)

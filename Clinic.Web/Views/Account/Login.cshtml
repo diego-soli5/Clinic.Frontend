@@ -12,11 +12,11 @@
     <title>Clinica - Login</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet"  href="~/css/login.css" />
 </head>
 <body>
 
     <div class="container">
-       
         <div class="row">
             <section class="col-md-6 col-sm-12 mt-5 ml-auto mr-auto">
                 @if (ViewData["LoginMessage"] != null)
@@ -39,8 +39,8 @@
                     </div>
                 }
 
-                <article class="card mr-auto ml-auto">
-                    <header class="card-header bg-success">
+                <article class="card card-blue mr-auto ml-auto">
+                    <header class="card-header">
                         <h1 class="text-center font-weight-normal text-light">Clinica</h1>
                     </header>
                     <form method="post" asp-area="" asp-controller="Account" asp-action="Login" class="card-body" id="frm">
@@ -49,7 +49,7 @@
                         <input type="hidden" name="returnUrl" value="@ViewData["returnUrl"]" />
                     </form>
                     <footer class="card-footer">
-                        <button class="btn btn-success btn-block" type="submit" form="frm">Iniciar Sesión</button>
+                        <button class="btn btn-primary btn-block" type="submit" form="frm">Iniciar Sesión</button>
                     </footer>
                 </article>
 
@@ -71,9 +71,10 @@
 
             </section>
         </div>
+
     </div>
 
-    
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

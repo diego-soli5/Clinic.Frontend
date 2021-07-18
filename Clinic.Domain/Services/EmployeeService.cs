@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Clinic.CrossCutting.Abstractions;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
-using Clinic.CrossCutting.Cache;
 using Clinic.Domain.Models.Responses;
 using Clinic.Domain.Models.QueryFilters;
 
@@ -27,13 +26,9 @@ namespace Clinic.Domain.Services
 
         public async Task<EmployeeIndexViewModel> GetAllAsync(EmployeeQueryFilter filters, string token)
         {
-            EmployeeCache.GetEmployeeQueryFilterCache(filters);
-
             string url = _uriGenerator.CreatePagedListUri(_employeeRoutes.Employee, filters).ToString();
 
             var apiResponse = await _repository.Get<IEnumerable<EmployeeListDTO>>(url, authToken: token);
-
-            EmployeeCache.SetEmployeeQueryFilterCache(filters);
 
             var oViewModel = new EmployeeIndexViewModel
             {

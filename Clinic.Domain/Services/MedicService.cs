@@ -1,5 +1,4 @@
 ﻿using Clinic.CrossCutting.Abstractions;
-using Clinic.CrossCutting.Cache;
 using Clinic.CrossCutting.Routes;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Abstractions;
@@ -32,13 +31,9 @@ namespace Clinic.Domain.Services
 
         public async Task<MedicIndexViewModel> GetAllAsync(MedicQueryFilter filters, string authToken)
         {
-            MedicCache.GetMedicQueryFilterCache(filters);
-
             string url = _uriGenerator.CreatePagedListUri(_medicRoutes.Medic, filters).ToString();
 
             var medicListReponse = await _repository.Get<IEnumerable<MedicListDTO>>(url, authToken: authToken);
-
-            MedicCache.SetMedicQueryFilterCache(filters);
 
             url = _medicRoutes.Specialties;
 

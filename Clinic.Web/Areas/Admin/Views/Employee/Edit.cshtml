@@ -1,11 +1,14 @@
 ﻿@model Clinic.Domain.Models.ViewModels.Admin.Employee.EmployeeEditViewModel
 @{
-    ViewData["Title"] = "Editar Empleado";
+    ViewData["Title"] = "Empleados";
 }
 
-<div class="border p-2">
-    <div class="row">
-        <div class="container">
+<div class="card card-blue">
+    <div class="card-header">
+        <h4>Editar</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
             <div class="col-sm-12">
                 <form method="post" asp-area="Admin" asp-controller="Employee" asp-action="Edit">
                     <div class="row">

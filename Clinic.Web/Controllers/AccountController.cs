@@ -2,6 +2,7 @@
 using Clinic.Domain.Filters;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Web.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly IAccountService _service;
@@ -22,6 +24,7 @@ namespace Clinic.Web.Controllers
 
         [HttpGet]
         [IsAlreadyAuthenticatedFilter]
+        [AllowAnonymous]
         public IActionResult Login(string returnUrl)
         {
             if (returnUrl != null)
@@ -31,6 +34,7 @@ namespace Clinic.Web.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(string credential, string password, string returnUrl)
         {
             var result = await _service.TryAuthenticateAsync(credential, password);

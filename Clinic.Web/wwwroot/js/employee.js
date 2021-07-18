@@ -1,4 +1,6 @@
 ﻿var currentPage = 1;
+var ide = "";
+var sta = "";
 
 $(function () {
 
@@ -15,10 +17,10 @@ $(function () {
     $("#frmSearch").submit(function (e) {
         e.preventDefault();
 
-        let ide = $("#identification").val();
-        let status = $("#EmployeeStatus").val();
+        ide = $("#identification").val();
+        sta = $("#EmployeeStatus").val();
 
-        $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${status}`, function () {
+        $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${sta}`, function () {
             bindEvts(1);
         });
 
@@ -55,7 +57,7 @@ $(function () {
 
     function getPaginatedPage(pgnum) {
 
-        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true`, function () {
+        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${ide}&employeeStatus=${sta}`, function () {
             bindEvts(pgnum);
         });
     }

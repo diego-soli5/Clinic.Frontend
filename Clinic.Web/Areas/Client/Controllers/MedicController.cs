@@ -1,15 +1,19 @@
 ﻿using Clinic.Domain.Abstractions;
+using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.QueryFilters;
+using Clinic.Domain.Models.ViewModels.Client.Medic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Areas.Client.Controllers
 {
     [Area("Client")]
-    [Authorize(Roles = nameof(EmployeeRole.Secretary))]
+    [Authorize(Roles = nameof(EmployeeRole.Secretary) + "," +nameof(AppUserRole.Administrator))]
     public class MedicController : Controller
     {
         private readonly IMedicService _medicService;
@@ -42,6 +46,35 @@ namespace Clinic.Web.Areas.Client.Controllers
             var oVM = await _medicService.GetAllMedicsPendingForUpdate(GetCurrentToken());
 
             return PartialView("_MedicPendingUpdatePartial", oVM);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PendingUpdate(int id)
+        {
+            var oVM = new MedicPendingUpdateViewModel();
+
+            oVM.ConsultingRooms = new List<SelectListItem>();
+            oVM.MedicalSpecialties = new List<SelectListItem>();
+
+            return View(oVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PendingUpdate(MedicDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var oVM = new MedicPendingUpdateViewModel();
+                oVM.ConsultingRooms = new List<SelectListItem>();
+                oVM.MedicalSpecialties = new List<SelectListItem>();
+
+                return View(oVM);
+            }
+
+            TempData["MedicMessage"] = $"Se actualizó correctamente la información del médico {model.Names}.";
+
+            return RedirectToAction(nameof(Index));
         }
 
         #region UTILITY METHODS

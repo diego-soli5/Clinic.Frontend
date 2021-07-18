@@ -1,83 +1,47 @@
 ﻿@model Clinic.Domain.Models.ViewModels.Client.Medic.MedicIndexViewModel
 
 <div class="row">
-    <table class="table table-hover table-responsive-sm table-responsive-md">
-        <thead>
-            <tr>
-                <th>Identificación</th>
-                <th>Nombre Completo</th>
-                <th>Especialidad</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Metadata.TotalCount > 0)
-            {
-                @foreach (var med in Model.Medics)
+    <div class="col-12">
+        <table class="table table-sm table-bordered table-hover table-responsive-sm table-responsive-md">
+            <thead>
+                <tr>
+                    <th>Identificación</th>
+                    <th>Nombre Completo</th>
+                    <th>Especialidad</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Metadata.TotalCount > 0)
                 {
-                    <tr class="border">
+                    @foreach (var med in Model.Medics)
+                    {
+                        <tr class="border">
 
-                        <input type="hidden" name="hdId" value="@med.Id" />
+                            <input type="hidden" name="hdId" value="@med.Id" />
 
-                        <td>@med.Identification</td>
-                        <td>@med.FullName</td>
-                        <td>@med.MedicalSpecialtyName</td>
-                        <td>
-                            <div class="row">
-                                <div class="col-xl-12">
-                                    <a asp-area="Client" asp-controller="Medic" asp-action="Edit" asp-route-id="@med.Id" class="btn btn-success btn-block">Editar</a>
+                            <td>@med.Identification</td>
+                            <td>@med.FullName</td>
+                            <td>@med.MedicalSpecialtyName</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <a asp-area="Client" asp-controller="Medic" asp-action="Edit" asp-route-id="@med.Id" class="btn btn-success btn-block btn-sm">Editar</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr>
-                    <td colspan="3" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <div class="col-sm-12">
-        <a asp-area="client" asp-controller="Medic" asp-action="Create" class="btn btn-primary mb-2">Agregar nuevo</a>
+            </tbody>
+        </table>
     </div>
-    <div class="mr-auto ml-auto">
-        @if (Model.Metadata.TotalCount > 0)
-        {
-            <nav>
-                <ul class="pagination justify-content-center">
-                    @{
-                        string prevDisabled = (!Model.Metadata.HasPreviousPage) ? "disabled" : "";
-                        string nextDisabled = (!Model.Metadata.HasNextPage) ? "disabled" : "";
-                    }
-                    <li class="page-item @prevDisabled">
-                        <button class="page-link" href="#" tabindex="-1" aria-disabled="true" data-page="@Model.Metadata.PreviousPageNumber" id="btnPrevPage">Anterior</button>
-                    </li>
-                    @for (int i = 0; i < Model.Metadata.TotalPages; i++)
-                    {
-                        string currentDisabled = "";
-
-                        if (Model.Metadata.CurrentPage == i + 1)
-                        {
-                            currentDisabled = "disabled";
-                        }
-
-                        <li class="page-item @currentDisabled"><button class="page-link" data-page="@(i+1)" id="btnPage">@(i+1)</button></li>
-                    }
-                    <li class="page-item @nextDisabled">
-                        <button class="page-link" data-page="@Model.Metadata.NextPageNumber" id="btnNextPage">Siguiente</button>
-                    </li>
-                </ul>
-            </nav>
-        }
-    </div>
-
-    <div id="vwPendingUpdate">
-        @{ await Html.RenderPartialAsync("_MedicPendingUpdatePartial", Model.MedicsPendingForUpdate); }
-    </div>
-
 </div>
 
 
