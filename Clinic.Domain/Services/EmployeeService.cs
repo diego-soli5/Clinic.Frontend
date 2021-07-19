@@ -43,7 +43,12 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isUpdate", true } }).ToString();
+            var queryParams = new
+            {
+                isUpdate = true
+            };
+
+            url = _uriGenerator.AddQueryStringParams(url, queryParams).ToString();
 
             var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url, authToken: token);
 
@@ -61,7 +66,12 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            url = _uriGenerator.AddQueryStringParams(url, new Dictionary<string, object> { { "isToUpdate", false } }).ToString();
+            var queryParams = new
+            {
+                isUpdate = false
+            };
+
+            url = _uriGenerator.AddQueryStringParams(url, queryParams).ToString();
 
             var apiResponse = await _repository.Get<EmployeeDTO>(url, authToken: token);
 

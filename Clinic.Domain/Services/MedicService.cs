@@ -58,11 +58,12 @@ namespace Clinic.Domain.Services
 
         public async Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken)
         {
-            string url = _uriGenerator.AddQueryStringParams(_medicRoutes.Medic,
-                new Dictionary<string, object>
-                {
-                    { "PendingUpdate", true }
-                }).ToString();
+            var queryParams = new
+            {
+                PendingUpdate = true
+            };
+
+            string url = _uriGenerator.AddQueryStringParams(_medicRoutes.Medic, queryParams).ToString();
 
             var response = await _repository.Get<IEnumerable<MedicDisplayPendingForUpdateDTO>>(url, authToken: authToken);
 

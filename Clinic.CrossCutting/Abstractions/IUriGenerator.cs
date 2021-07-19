@@ -1,6 +1,5 @@
 ﻿using Clinic.Domain.Models.QueryFilters;
 using System;
-using System.Collections.Generic;
 
 namespace Clinic.CrossCutting.Abstractions
 {
@@ -8,6 +7,6 @@ namespace Clinic.CrossCutting.Abstractions
     {
         Uri CreatePagedListUri<TQueryFilter>(string baseUri, TQueryFilter filter)
              where TQueryFilter : BaseQueryFilter;
-        Uri AddQueryStringParams(string baseUri, Dictionary<string, object> queryStringParams);
+        Uri AddQueryStringParams(string baseUri, object queryStringParams);
     }
 }
