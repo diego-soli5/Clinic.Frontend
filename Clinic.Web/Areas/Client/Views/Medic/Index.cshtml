@@ -25,7 +25,7 @@
     </div>
 }
 
-@if (Model.MedicsPendingForUpdate != null)
+@if (Model.MedicsPendingForUpdate.Any())
 {
     <div class="card card-warning" id="vwPendingUpdate">
         @{ await Html.RenderPartialAsync("_MedicPendingUpdatePartial", Model.MedicsPendingForUpdate); }

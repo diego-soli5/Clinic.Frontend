@@ -144,6 +144,36 @@ namespace Clinic.Web.Areas.Admin.Controllers
         }
 
         #region API ACTIONS
+        [HttpPost]
+        [Route("api/admin/employee/delete/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id, [FromBody] EmployeeDeleteDTO model)
+        {
+            var response = await _employeeService.DeleteAsync(id, model.Password, GetCurrentToken());
+
+            if (response.StatusCode == StatusCodes.Status204NoContent)
+            {
+                return Ok(response);
+            }
+            else if (response.StatusCode == StatusCodes.Status400BadRequest)
+            {
+                return BadRequest(response);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+            }
+        }
+        #endregion
+
+        #region UTILITY METHODS
+        private string GetCurrentToken()
+        {
+            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
+
+            return token;
+        }
+        #endregion
 
         #region DESECHADO
         //Codigo comentado por posibilidad de reintegrar la funcionalidad
@@ -200,37 +230,6 @@ namespace Clinic.Web.Areas.Admin.Controllers
             }
         }
         */
-        #endregion
-
-        [HttpPost]
-        [Route("api/admin/employee/delete/{id}")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, [FromBody] EmployeeDeleteDTO model)
-        {
-            var response = await _employeeService.DeleteAsync(id, model.Password, GetCurrentToken());
-
-            if (response.StatusCode == StatusCodes.Status204NoContent)
-            {
-                return Ok(response);
-            }
-            else if (response.StatusCode == StatusCodes.Status400BadRequest)
-            {
-                return BadRequest(response);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-        #endregion
-
-        #region UTILITY METHODS
-        private string GetCurrentToken()
-        {
-            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
-
-            return token;
-        }
         #endregion
     }
 }

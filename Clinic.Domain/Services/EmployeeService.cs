@@ -8,6 +8,8 @@ using Clinic.CrossCutting.Abstractions;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
 using Clinic.Domain.Models.Responses;
 using Clinic.Domain.Models.QueryFilters;
+using Microsoft.AspNetCore.Http;
+using Clinic.CrossCutting.CustomExceptions;
 
 namespace Clinic.Domain.Services
 {

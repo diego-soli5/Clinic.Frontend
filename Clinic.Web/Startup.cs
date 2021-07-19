@@ -4,10 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Clinic.Domain.Extensions;
-using Clinic.CrossCutting.Routes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
-using Clinic.Domain.Filters;
 
 namespace Clinic.Web
 {
@@ -62,7 +60,7 @@ namespace Clinic.Web
             }
             else
             {
-                app.UseExceptionHandler("/Home/Handle");
+                app.UseExceptionHandler("/Error/Handle");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
