@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Clinic.Web.Areas.Client.Controllers
 {
     [Area("Client")]
-    [Authorize(Roles = nameof(EmployeeRole.Secretary) + "," +nameof(AppUserRole.Administrator))]
+    [Authorize(Roles = nameof(EmployeeRole.Secretary) + "," + nameof(AppUserRole.Administrator))]
     public class MedicController : Controller
     {
         private readonly IMedicService _medicService;
@@ -51,7 +51,14 @@ namespace Clinic.Web.Areas.Client.Controllers
         [HttpGet]
         public async Task<IActionResult> PendingUpdate(int id)
         {
-            var oVM = new MedicPendingUpdateViewModel();
+            var oVM = await _medicService.GetMedicPendingForUpdate(id, GetCurrentToken());
+
+            if (!oVM.Success)
+            {
+                TempData["ErrorMedicMessage"] = oVM.Message;
+
+                return RedirectToAction(nameof(Index));
+            }
 
             oVM.ConsultingRooms = new List<SelectListItem>();
             oVM.MedicalSpecialties = new List<SelectListItem>();
@@ -61,11 +68,19 @@ namespace Clinic.Web.Areas.Client.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PendingUpdate(MedicDTO model)
+        public async Task<IActionResult> PendingUpdate(MedicPedingUpdateDTO model)
         {
             if (!ModelState.IsValid)
             {
-                var oVM = new MedicPendingUpdateViewModel();
+                var oVM = await _medicService.GetMedicPendingForUpdate(model.IdEmployee, GetCurrentToken());
+
+                if (!oVM.Success)
+                {
+                    TempData["ErrorMedicMessage"] = oVM.Message;
+
+                    return RedirectToAction(nameof(Index));
+                }
+
                 oVM.ConsultingRooms = new List<SelectListItem>();
                 oVM.MedicalSpecialties = new List<SelectListItem>();
 

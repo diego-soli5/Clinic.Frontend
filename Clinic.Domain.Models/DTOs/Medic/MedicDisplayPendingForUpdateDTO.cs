@@ -1,6 +1,6 @@
 ﻿namespace Clinic.Domain.Models.DTOs.Medic
 {
-    public class MedicPendingForUpdateDTO
+    public class MedicDisplayPendingForUpdateDTO
     {
         public int EmployeeId { get; set; }
         public int Identification { get; set; }

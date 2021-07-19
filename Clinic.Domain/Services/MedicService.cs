@@ -56,7 +56,7 @@ namespace Clinic.Domain.Services
             return viewModel;
         }
 
-        public async Task<IEnumerable<MedicPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken)
+        public async Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken)
         {
             string url = _uriGenerator.AddQueryStringParams(_medicRoutes.Medic,
                 new Dictionary<string, object>
@@ -64,9 +64,25 @@ namespace Clinic.Domain.Services
                     { "PendingUpdate", true }
                 }).ToString();
 
-            var response = await _repository.Get<IEnumerable<MedicPendingForUpdateDTO>>(url, authToken: authToken);
+            var response = await _repository.Get<IEnumerable<MedicDisplayPendingForUpdateDTO>>(url, authToken: authToken);
 
             return response.Data;
+        }
+
+        public async Task<MedicPendingUpdateViewModel> GetMedicPendingForUpdate(int idEmployee, string authToken)
+        {
+            string url = $"{_medicRoutes.Pending}{idEmployee}";
+
+            var medicResponse = await _repository.Get<MedicPedingUpdateDTO>(url, authToken: authToken);
+
+            var viewModel = new MedicPendingUpdateViewModel
+            {
+                Medic = medicResponse.Data,
+                Success = medicResponse.Success,
+                Message = medicResponse.Message
+            };
+
+            return viewModel;
         }
     }
 }

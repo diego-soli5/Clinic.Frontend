@@ -2,8 +2,9 @@
 
 namespace Clinic.Domain.Models.DTOs.Medic
 {
-    public class MedicDTO
+    public class MedicPedingUpdateDTO
     {
+        public int IdEmployee { get; set; }
         //This info is going to be updated
         [Required(ErrorMessage = "El campo es obligatorio.")]
         [Display(Name = "Consultorio")]
@@ -11,7 +12,6 @@ namespace Clinic.Domain.Models.DTOs.Medic
         [Required(ErrorMessage = "El campo es obligatorio.")]
         [Display(Name = "Especialidad Médica")]
         public int IdMedicalSpecialty { get; set; }
-        public int IdEmployee { get; set; }
 
         //Just to display
         public string Names { get; set; }

@@ -9,6 +9,7 @@ namespace Clinic.Domain.Abstractions
     public interface IMedicService
     {
         Task<MedicIndexViewModel> GetAllAsync(MedicQueryFilter filters, string authToken);
-        Task<IEnumerable<MedicPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken);
+        Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken);
+        Task<MedicPendingUpdateViewModel> GetMedicPendingForUpdate(int idEmployee, string authToken);
     }
 }

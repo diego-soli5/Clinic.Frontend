@@ -24,6 +24,14 @@ namespace Clinic.CrossCutting.Routes
                 return $"{Medic}/{nameof(Specialties)}";
             }
         }
+
+        public string Pending
+        {
+            get
+            {
+                return $"{Medic}/{nameof(Pending)}/";
+            }
+        }
     }
 }
 

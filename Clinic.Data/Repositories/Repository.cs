@@ -75,6 +75,14 @@ namespace Clinic.Data.Repositories
                         defaultGetApiResponse.Message = notFoundResponse.Message;
                     }
                 }
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                    defaultGetApiResponse.Message = badRequestResponse.Message;
+                }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     defaultGetApiResponse.Message = "Ocurrió un error interno en el servidor.";

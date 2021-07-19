@@ -6,8 +6,10 @@ namespace Clinic.Domain.Models.ViewModels.Client.Medic
 {
     public class MedicPendingUpdateViewModel
     {
-        public MedicDTO Medic { get; set; }
+        public MedicPedingUpdateDTO Medic { get; set; }
         public IEnumerable<SelectListItem> MedicalSpecialties { get; set; }
         public IEnumerable<SelectListItem> ConsultingRooms { get; set; }
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 }
