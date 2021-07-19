@@ -60,9 +60,6 @@ namespace Clinic.Web.Areas.Client.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            oVM.ConsultingRooms = new List<SelectListItem>();
-            oVM.MedicalSpecialties = new List<SelectListItem>();
-
             return View(oVM);
         }
 
@@ -80,9 +77,6 @@ namespace Clinic.Web.Areas.Client.Controllers
 
                     return RedirectToAction(nameof(Index));
                 }
-
-                oVM.ConsultingRooms = new List<SelectListItem>();
-                oVM.MedicalSpecialties = new List<SelectListItem>();
 
                 return View(oVM);
             }

@@ -15,15 +15,6 @@ namespace Clinic.CrossCutting.Routes
         }
 
         public string Medic { get; private set; }
-        
-        
-        public string Specialties
-        {
-            get
-            {
-                return $"{Medic}/{nameof(Specialties)}";
-            }
-        }
 
         public string Pending
         {

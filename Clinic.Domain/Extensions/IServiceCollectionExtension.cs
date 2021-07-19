@@ -56,6 +56,10 @@ namespace Clinic.Domain.Extensions
             services.AddSingleton(typeof(AccountRoutes));
 
             services.AddSingleton(typeof(MedicRoutes));
+
+            services.AddSingleton(typeof(MedicalSpecialtyRoutes));
+
+            services.AddSingleton(typeof(ConsultingRoomRoutes));
         }
     }
 }
