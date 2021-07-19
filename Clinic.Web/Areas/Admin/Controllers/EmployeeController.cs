@@ -59,6 +59,9 @@ namespace Clinic.Web.Areas.Admin.Controllers
 
             if (response.Success)
             {
+                if (model.EmployeeRole == EmployeeRole.Medic)
+                    TempData["IdMedic"] = response.NewResourceId;
+
                 TempData["EmployeeMessage"] = $"El empleado {model.Person.Names} se agregó correctamente!";
 
                 return RedirectToAction(nameof(Index));

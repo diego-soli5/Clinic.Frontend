@@ -10,7 +10,19 @@
             <span aria-hidden="true">&times;</span>
         </button>
         <h4 class="alert-heading"><i class="fas fa-check"></i> Exito!</h4>
-        <p class="mb-0">@TempData["EmployeeMessage"].ToString()</p>
+        <p class="mb-0">
+            @TempData["EmployeeMessage"].ToString()
+        </p>
+        @if (TempData["IdMedic"] != null)
+        {
+            <p class="mb-0">
+                Se debe terminar de <a asp-area="Client"
+                                       asp-controller="Medic"
+                                       asp-action="PendingUpdate"
+                                       asp-route-id="@TempData["IdMedic"]"><span class="font-weight-bold">ACTUALIZAR</span></a>
+                la información al ser de tipo Médico.
+            </p>
+        }
     </div>
 
 }

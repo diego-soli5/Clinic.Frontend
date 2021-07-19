@@ -135,10 +135,20 @@ namespace Clinic.Data.Repositories
 
                         defaultPostApiResponse.Message = okResponse.Message;
                     }
+
+                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                    {
+                        defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                    }
                 }
                 else if(httpResponseMessage.StatusCode == HttpStatusCode.Created)
                 {
                     defaultPostApiResponse.Success = true;
+
+                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                    {
+                        defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                    }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
                 {
@@ -207,10 +217,20 @@ namespace Clinic.Data.Repositories
 
                         dataPostApiResponse.Message = okResponse.Message;
                     }
+
+                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                    {
+                        dataPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                    }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
                 {
                     dataPostApiResponse.Success = true;
+
+                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                    {
+                        dataPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                    }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
                 {
