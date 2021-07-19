@@ -81,7 +81,11 @@ namespace Clinic.Web.Areas.Admin.Controllers
             var oVM = await _employeeService.GetByIdToUpdateAsync(id, GetCurrentToken());
 
             if (!oVM.Success)
-                return NotFound();
+            {
+                TempData["ErrorEmployeeMessage"] = oVM.Message;
+
+                return RedirectToAction(nameof(Index));
+            }
 
             return View(oVM);
         }
@@ -121,6 +125,13 @@ namespace Clinic.Web.Areas.Admin.Controllers
         {
             var oVM = await _employeeService.GetByIdAsync(id, GetCurrentToken());
 
+            if (!oVM.Success)
+            {
+                TempData["ErrorEmployeeMessage"] = oVM.Message;
+
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(oVM);
         }
 
@@ -133,6 +144,10 @@ namespace Clinic.Web.Areas.Admin.Controllers
         }
 
         #region API ACTIONS
+
+        #region DESECHADO
+        //Codigo comentado por posibilidad de reintegrar la funcionalidad
+        /*
         [HttpPost]
         [Route("api/admin/employee/fire/{id}")]
         public async Task<IActionResult> Fire(int id)
@@ -184,6 +199,8 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
+        */
+        #endregion
 
         [HttpPost]
         [Route("api/admin/employee/delete/{id}")]

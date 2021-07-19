@@ -81,7 +81,16 @@ namespace Clinic.Web.Areas.Client.Controllers
                 return View(oVM);
             }
 
-            TempData["MedicMessage"] = $"Se actualizó correctamente la información del médico {model.Names}.";
+            var response = await _medicService.UpdatePendingMedic(model, GetCurrentToken());
+
+            if (!response.Success)
+            {
+                TempData["ErrorMedicMessage"] = response.Message;
+            }
+            else
+            {
+                TempData["MedicMessage"] = $"Se actualizó correctamente la información del médico {model.Names}.";
+            }
 
             return RedirectToAction(nameof(Index));
         }

@@ -14,7 +14,11 @@ namespace Clinic.Domain.Abstractions
         Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model, string token);
         Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model, string token);
         Task<DefaultDeleteApiResponse> DeleteAsync(int id, string pass, string token);
-        Task<DefaultPatchApiResponse> Fire(int id, string token);
-        Task<DefaultPatchApiResponse> Activate(int id, string token);
+
+        #region DESECHADO
+        //Codigo comentado por posibilidad de reintegrar la funcionalidad
+        //Task<DefaultPatchApiResponse> Fire(int id, string token);
+        //Task<DefaultPatchApiResponse> Activate(int id, string token);
+        #endregion
     }
 }

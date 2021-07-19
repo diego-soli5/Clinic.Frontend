@@ -12,6 +12,8 @@
             <div class="col-sm-12">
                 <form asp-area="Client" asp-controller="Medic" asp-action="PendingUpdate" method="post" id="frm">
                     @Html.HiddenFor(x => x.Medic.IdEmployee)
+                    @Html.HiddenFor(x => x.Medic.Names)
+
                     <div class="form-group">
                         <label asp-for="Medic.FullName"></label>
                         <input asp-for="Medic.FullName" disabled class="form-control" />

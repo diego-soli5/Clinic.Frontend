@@ -106,6 +106,9 @@ namespace Clinic.Domain.Services
             return await _repository.Delete(url, new { password }, token);
         }
 
+        #region DESECHADO
+        //Codigo comentado por posibilidad de reintegrar la funcionalidad
+        /*
         public async Task<DefaultPatchApiResponse> Fire(int id, string token)
         {
             string url = _employeeRoutes.Fire + id;
@@ -118,6 +121,7 @@ namespace Clinic.Domain.Services
             string url = _employeeRoutes.Activate + id;
 
             return await _repository.Patch(url, authToken: token);
-        }
+        }*/
+        #endregion
     }
 }

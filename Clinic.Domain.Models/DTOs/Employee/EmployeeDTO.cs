@@ -1,5 +1,4 @@
-﻿using Clinic.Domain.Models.DTOs.AppUser;
-using Clinic.Domain.Models.DTOs.Person;
+﻿using Clinic.Domain.Models.DTOs.Person;
 using Clinic.Domain.Models.Enumerations;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +9,7 @@ namespace Clinic.Domain.Models.DTOs.Employee
     {
         public int Id { get; set; }
 
-        [Display(Name = "Tipo de Empleado")]
+        [Display(Name = "Tipo de Empleado:")]
         public EmployeeRole EmployeeRole { get; set; }
 
         [Display(Name = "Estado del Empleado:")]

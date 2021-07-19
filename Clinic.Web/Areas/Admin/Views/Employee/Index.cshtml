@@ -27,6 +27,19 @@
 
 }
 
+@if (TempData["ErrorEmployeeMessage"] != null)
+{
+    <div class="alert alert-dismissible fade show alert-danger mb-3" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="alert-heading"><i class="fas fa-ban"></i> Hubo un problema...</h4>
+        <p class="mb-0">
+            @TempData["ErrorEmployeeMessage"].ToString()
+        </p>
+    </div>
+}
+
 <div class="card card-blue">
     <div class="card-header">
         <h4>Gestionar</h4>
@@ -41,13 +54,15 @@
                         <input asp-for="QueryFilters.Identification" id="identification" class="form-control" />
                     </div>
                 </div>
-                <div class="col-sm-6">
+                @* Comentado por posibilidad de reintegrar la funcionalidad *@
+                @*<div class="col-sm-6">
                     <div class="form-group">
                         <label asp-for="QueryFilters.EmployeeStatus"></label>
                         @Html.DropDownList(nameof(Model.QueryFilters.EmployeeStatus), Model.SelectListEmployeeStatus, "Todos", new { @class = "form-control" })
                     </div>
-                </div>
-                <div class="col-sm-3 mb-3">
+                </div>*@
+                <div class="col-sm-3 offset-sm-3 mb-3">
+                    <label>&nbsp;</label>
                     <input type="submit" value="Buscar" class="btn btn-outline-primary btn-block form-control" />
                 </div>
             </form>

@@ -8,7 +8,6 @@
                 <th>Nombre Completo</th>
                 <th>Fecha de Contratación</th>
                 <th>Tipo de Empleado</th>
-                <th>Estado</th>
                 <th class="text-center">Acciones</th>
             </tr>
         </thead>
@@ -27,9 +26,10 @@
                         <td>@emp.FullName</td>
                         <td>@emp.HireDate.ToShortDateString()</td>
                         <td>@emp.EmployeeRole.ToString()</td>
-                        <td>@emp.EmployeeStatus.ToString()</td>
                         <td>
                             <div class="row">
+                                @* Codigo comentado por posibilidad de reintegrar la funcionalidad *@
+                                @* 
                                 <div class="col-xl-6">
                                     @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
                                     {
@@ -40,7 +40,8 @@
                                         <button class="btn btn-danger btn-block btn-sm" data-id="@emp.Id" id="btnFire">Despedir</button>
                                     }
                                 </div>
-                                <div class="col-xl-6">
+                                *@
+                                <div class="col-xl-12">
                                     <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block btn-sm">Editar</a>
                                 </div>
                             </div>
@@ -51,7 +52,7 @@
             else
             {
                 <tr>
-                    <td colspan="6" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
+                    <td colspan="5" class="text-center"><span class="text-danger">No hay datos disponibles.</span></td>
                 </tr>
             }
         </tbody>

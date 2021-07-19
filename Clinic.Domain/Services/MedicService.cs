@@ -5,12 +5,11 @@ using Clinic.Domain.Abstractions;
 using Clinic.Domain.Models.DTOs.ConsultingRoom;
 using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.QueryFilters;
+using Clinic.Domain.Models.Responses;
 using Clinic.Domain.Models.ViewModels.Client.Medic;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Clinic.Domain.Services
@@ -88,6 +87,15 @@ namespace Clinic.Domain.Services
             };
 
             return viewModel;
+        }
+
+        public async Task<DefaultPatchApiResponse> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
+        {
+            string url = $"{_medicRoutes.Medic}/{model.IdEmployee}";
+
+            var response = await _repository.Patch(url, model, authToken);
+
+            return response;
         }
 
         #region UTILITY METHODS

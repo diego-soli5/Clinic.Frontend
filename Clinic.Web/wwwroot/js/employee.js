@@ -76,6 +76,8 @@ $(function () {
             });
         });
 
+        //Codigo comentado por posibilidad de reintegrar la funcionalidad
+        /*
         document.querySelectorAll("#btnFire").forEach(x => {
             x.addEventListener("click", function (e) {
                 e.stopPropagation();
@@ -147,6 +149,7 @@ $(function () {
                 })
             });
         });
+        */
     }
 
     bindCRUDevts();
