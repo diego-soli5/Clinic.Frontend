@@ -1,0 +1,166 @@
+﻿@model Clinic.Domain.Models.Responses.Metadata
+
+<div class="mr-auto ml-auto">
+    @if (Model?.TotalCount > 0)
+    {
+        <nav>
+            <ul class="pagination justify-content-center">
+
+                @{
+                    string prevDisabled = (!Model.HasPreviousPage) ? "disabled" : "";
+                    string nextDisabled = (!Model.HasNextPage) ? "disabled" : "";
+                    bool writeFirstButton = true;
+                    bool writeFirstSideDots = (Model.CurrentPage >= 5);
+                    bool writeLastSideDots = (Model.CurrentPage + 3 < Model.TotalPages);
+                }
+
+                <li class="page-item @prevDisabled">
+                    <button class="page-link" href="#" tabindex="-1" aria-disabled="true" data-page="@Model.PreviousPageNumber" id="btnPrevPage">«</button>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    string currentDisabled = "";
+                    string activePage = "";
+
+                    if (Model.CurrentPage == i)
+                    {
+                        currentDisabled = "disabled";
+                        activePage = "activePage";
+                    }
+
+                    if (Model.TotalPages > 7)
+                    {
+                        if (Model.CurrentPage >= 5)
+                        {
+                            if (writeFirstButton)
+                            {
+                                <li class="page-item @currentDisabled"><button class="page-link" data-page="1" id="btnPage">1</button></li>
+                                writeFirstButton = false;
+                            }
+
+                            if (writeFirstSideDots)
+                            {
+                                <li class="page-item disabled"><button class="page-link">...</button></li>
+                                writeFirstSideDots = false;
+                            }
+
+                            <li class="page-item"><button class="page-link" data-page="@(Model.CurrentPage - 1)" id="btnPage">@(Model.CurrentPage - 1) </button></li>
+                            <li class="page-item disabled"><button class="page-link activePage" data-page="@(Model.CurrentPage)" id="btnPage">@(Model.CurrentPage)</button></li>
+                            if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                <li class="page-item"><button class="page-link" data-page="@(Model.CurrentPage + 1)" id="btnPage">@(Model.CurrentPage + 1)</button></li>
+                            }
+
+                            if (Model.CurrentPage + 2 < Model.TotalPages)
+                            {
+                                if (!(Model.CurrentPage + 3 >= Model.TotalPages))
+                                {
+                                    writeLastSideDots = true;
+                                }
+                                else
+                                {
+                                    <li class="page-item"><button class="page-link" data-page="@(Model.CurrentPage + 2)" id="btnPage">@(Model.CurrentPage + 2)</button></li>
+                                }
+                            }
+
+                            if (writeLastSideDots)
+                            {
+                                <li class="page-item disabled"><button class="page-link">...</button></li>
+                                writeLastSideDots = false;
+                            }
+
+                            if (Model.CurrentPage + 2 <= Model.TotalPages)
+                            {
+                                <li class="page-item"><button class="page-link" data-page="@(Model.TotalPages)" id="btnPage">@(Model.TotalPages)</button></li>
+                            }
+
+
+                            break;
+                        }
+                        else
+                        {
+                            if (writeFirstButton)
+                            {
+                                <li class="page-item @currentDisabled"><button class="page-link @activePage" data-page="1" id="btnPage">1</button></li>
+                                writeFirstButton = false;
+                            }
+
+                            if (Model.CurrentPage == 1)
+                            {
+                                <li class="page-item"><button class="page-link" data-page="2" id="btnPage">2</button></li>
+
+                                if (writeLastSideDots)
+                                {
+                                    <li class="page-item disabled"><button class="page-link">...</button></li>
+                                    writeLastSideDots = false;
+                                }
+
+                                <li class="page-item"><button class="page-link" data-page="@Model.TotalPages" id="btnPage">@Model.TotalPages</button></li>
+                                break;
+                            }
+
+                            if (Model.CurrentPage == 2)
+                            {
+                                <li class="page-item disabled"><button class="page-link activePage" data-page="2" id="btnPage">2</button></li>
+                                <li class="page-item"><button class="page-link" data-page="3" id="btnPage">3</button></li>
+
+                                if (writeLastSideDots)
+                                {
+                                    <li class="page-item disabled"><button class="page-link">...</button></li>
+                                    writeLastSideDots = false;
+                                }
+
+                                <li class="page-item @currentDisabled"><button class="page-link" data-page="@Model.TotalPages" id="btnPage">@Model.TotalPages</button></li>
+
+                                break;
+                            }
+
+                            if (Model.CurrentPage == 3)
+                            {
+                                <li class="page-item"><button class="page-link" data-page="2" id="btnPage">2</button></li>
+                                <li class="page-item disabled"><button class="page-link activePage" data-page="3" id="btnPage">3</button></li>
+                                <li class="page-item"><button class="page-link" data-page="4" id="btnPage">4</button></li>
+
+                                if (writeLastSideDots)
+                                {
+                                    <li class="page-item disabled"><button class="page-link">...</button></li>
+                                    writeLastSideDots = false;
+                                }
+
+                                <li class="page-item @currentDisabled"><button class="page-link" data-page="@Model.TotalPages" id="btnPage">@Model.TotalPages</button></li>
+
+                                break;
+                            }
+
+                            if (Model.CurrentPage == 4)
+                            {
+                                <li class="page-item"><button class="page-link" data-page="2" id="btnPage">2</button></li>
+                                <li class="page-item"><button class="page-link" data-page="3" id="btnPage">3</button></li>
+                                <li class="page-item disabled"><button class="page-link activePage" data-page="4" id="btnPage">4</button></li>
+                                <li class="page-item"><button class="page-link" data-page="5" id="btnPage">5</button></li>
+
+                                if (writeLastSideDots)
+                                {
+                                    <li class="page-item disabled"><button class="page-link">...</button></li>
+                                    writeLastSideDots = false;
+                                }
+
+                                <li class="page-item @currentDisabled"><button class="page-link" data-page="@Model.TotalPages" id="btnPage">@Model.TotalPages</button></li>
+
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <li class="page-item @currentDisabled"><button class="page-link @activePage" data-page="@(i)" id="btnPage">@(i)</button></li>
+                    }
+                }
+                <li class="page-item @nextDisabled">
+                    <button class="page-link" data-page="@Model.NextPageNumber" id="btnNextPage">»</button>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

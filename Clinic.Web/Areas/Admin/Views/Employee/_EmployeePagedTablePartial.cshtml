@@ -60,35 +60,8 @@
     <div class="col-sm-12">
         <a asp-area="Admin" asp-controller="Employee" asp-action="Create" class="btn btn-primary mb-2">Agregar Nuevo</a>
     </div>
-    <div class="mr-auto ml-auto">
-        @if (Model.Metadata.TotalCount > 0)
-        {
-            <nav>
-                <ul class="pagination justify-content-center">
-                    @{
-                        string prevDisabled = (!Model.Metadata.HasPreviousPage) ? "disabled" : "";
-                        string nextDisabled = (!Model.Metadata.HasNextPage) ? "disabled" : "";
-                    }
-                    <li class="page-item @prevDisabled">
-                        <button class="page-link" href="#" tabindex="-1" aria-disabled="true" data-page="@Model.Metadata.PreviousPageNumber" id="btnPrevPage">Anterior</button>
-                    </li>
-                    @for (int i = 0; i < Model.Metadata.TotalPages; i++)
-                    {
-                        string currentDisabled = "";
 
-                        if (Model.Metadata.CurrentPage == i + 1)
-                        {
-                            currentDisabled = "disabled";
-                        }
+    @{ await Html.RenderPartialAsync("_PaginationButtonsPartial", Model.Metadata); }
 
-                        <li class="page-item @currentDisabled"><button class="page-link" data-page="@(i+1)" id="btnPage">@(i+1)</button></li>
-                    }
-                    <li class="page-item @nextDisabled">
-                        <button class="page-link" data-page="@Model.Metadata.NextPageNumber" id="btnNextPage">Siguiente</button>
-                    </li>
-                </ul>
-            </nav>
-        }
-    </div>
 </div>
 
