@@ -41,7 +41,7 @@
                 }
             </tbody>
         </table>
-        @{ await Html.RenderPartialAsync("_PaginationButtonsPartial"); }
+        @{ await Html.RenderPartialAsync("_PaginationButtonsPartial", Model.Metadata); }
     </div>
 </div>
 
