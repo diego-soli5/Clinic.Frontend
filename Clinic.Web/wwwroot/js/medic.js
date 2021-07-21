@@ -1,9 +1,12 @@
 ﻿var currentPage = 1;
+var ide = "";
+var ms = "";
 
 $(function () {
 
     //INICIA MISC
     function bindEvts(pgNum) {
+        bindPaginationEvts();
 
         currentPage = pgNum;
     }
@@ -13,10 +16,10 @@ $(function () {
     $("#frmSearch").submit(function (e) {
         e.preventDefault();
 
-        let ide = $("#identification").val();
-        let ms = $("#medicalSpecialty").val();
+        ide = $("#identification").val();
+        ms = $("#medicalSpecialty").val();
 
-        $("#tblEmployees").load(`/client/medic/GetTable?identification=${ide}&medicalSpecialty=${ms}`, function () {
+        $("#tblMedics").load(`/client/medic/GetTable?identification=${ide}&medicalSpecialty=${ms}`, function () {
             bindEvts(1);
         });
 
@@ -53,7 +56,7 @@ $(function () {
 
     function getPaginatedPage(pgnum) {
 
-        $("#tblMedics").load(`/client/medic/GetTable?pageNumber=${pgnum}&isPagination=true`, function () {
+        $("#tblMedics").load(`/client/medic/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${ide}&medicalSpecialty=${ms}`, function () {
             bindEvts(pgnum);
         });
     }
