@@ -1,4 +1,5 @@
 ﻿using Clinic.CrossCutting.Abstractions;
+using Clinic.CrossCutting.CustomExceptions;
 using Clinic.CrossCutting.Routes;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Abstractions;
@@ -7,6 +8,7 @@ using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.QueryFilters;
 using Clinic.Domain.Models.Responses;
 using Clinic.Domain.Models.ViewModels.Client.Medic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,6 +74,11 @@ namespace Clinic.Domain.Services
             string url = $"{_medicRoutes.Pending}{idEmployee}";
 
             var medicResponse = await _repository.Get<MedicPedingUpdateDTO>(url, authToken: authToken);
+
+            if (medicResponse.StatusCode == StatusCodes.Status404NotFound)
+            {
+                throw new NotFoundException(medicResponse.Message, idEmployee);
+            }
 
             var lstMedicSpecialtiesSelectListItems = await GetMedicalSpecialtiesSelectListItems(authToken);
 

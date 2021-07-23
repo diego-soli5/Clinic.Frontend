@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Models.Responses.Api;
 using Clinic.CrossCutting.CustomExceptions;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Clinic.Data.Repositories
 {
@@ -20,6 +22,139 @@ namespace Clinic.Data.Repositories
         {
             _clientFactory = clientFactory;
         }
+
+        #region FILE METHODS
+        public async Task<DefaultPostApiResponse> PostFile(string url, IFormFile file, string authToken = null)
+        {
+            DefaultPostApiResponse defaultPostApiResponse = new DefaultPostApiResponse();
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+
+            using (var form = new MultipartFormDataContent())
+            {
+                var fs = new StreamContent(file.OpenReadStream());
+
+                fs.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                fs.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { Name = file.Name, FileName = file.FileName };
+
+                form.Add(fs, "image", file.FileName);
+
+                request.Content = form;
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                    }
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        defaultPostApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+
+                        if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+                        {
+                            defaultPostApiResponse.Success = true;
+
+                            if (httpResponseMessage.Content != null)
+                            {
+                                string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                                var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
+
+                                defaultPostApiResponse.Message = okResponse.Message;
+                            }
+
+                            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                            {
+                                defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                            }
+                        }
+                        else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            if (httpResponseMessage.Content != null)
+                            {
+                                string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                                var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
+
+                                defaultPostApiResponse.Message = notFoundResponse.Message;
+                            }
+                        }
+                        else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
+                        {
+                            defaultPostApiResponse.Success = true;
+
+                            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
+                            {
+                                defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+                            }
+                        }
+                        else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+                        {
+                            string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                            var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                            defaultPostApiResponse.Message = badRequestResponse.Message;
+                        }
+                        else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
+                            //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
+                            //defaultPostApiResponse.Message = unauthorizedResponse.Message;
+
+                            throw new UnauthorizedException();
+                        }
+                        else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                        {
+                            defaultPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
+                        }
+                        else
+                        {
+                            defaultPostApiResponse.Message = $"El servidor respondió con un código de estado {defaultPostApiResponse.StatusCode}.";
+                        }
+
+                        return defaultPostApiResponse;
+                    }
+                }
+            }
+        }
+
+        public async Task<(byte[], string)> GetFile(string url, string authToken = null)
+        {
+            byte[] fileBytes = null;
+            string contentType = null;
+
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+            using (var client = _clientFactory.CreateClient())
+            {
+                if (!string.IsNullOrEmpty(authToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                }
+
+                using (var httpResponseMessage = await client.SendAsync(request))
+                {
+                    if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+                    {
+                        if (httpResponseMessage.Content != null)
+                        {
+                            fileBytes = await httpResponseMessage.Content.ReadAsByteArrayAsync();
+
+                            if (httpResponseMessage.Content.Headers.Contains("Content-Type"))
+                            {
+                                contentType = httpResponseMessage.Content.Headers.GetValues("Content-Type").FirstOrDefault();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (fileBytes, contentType);
+        }
+        #endregion
 
         public async Task<DefaultGetApiResponse<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null)
         {
@@ -73,8 +208,6 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         defaultGetApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
@@ -152,11 +285,9 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         defaultPostApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
-                else if(httpResponseMessage.StatusCode == HttpStatusCode.Created)
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
                 {
                     defaultPostApiResponse.Success = true;
 
@@ -227,7 +358,7 @@ namespace Clinic.Data.Repositories
 
                         var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
 
-                        if(okResponse.Data != null)
+                        if (okResponse.Data != null)
                             dataPostApiResponse.Data = JsonConvert.DeserializeObject<TData>(okResponse.Data.ToString());
 
                         dataPostApiResponse.Message = okResponse.Message;
@@ -247,8 +378,6 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         dataPostApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
@@ -316,7 +445,7 @@ namespace Clinic.Data.Repositories
                 {
                     defaultPutApiResponse.Success = true;
                 }
-                else if(httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
                 {
                     if (httpResponseMessage.Content != null)
                     {
@@ -325,8 +454,6 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         defaultPutApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
@@ -341,7 +468,7 @@ namespace Clinic.Data.Repositories
                 {
                     defaultPutApiResponse.Message = "Ocurrió un error interno en el servidor.";
                 }
-                else if(httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     throw new UnauthorizedException();
                 }
@@ -398,8 +525,6 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         defaultPatchApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
@@ -455,8 +580,6 @@ namespace Clinic.Data.Repositories
                         var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                         defaultDeleteApiResponse.Message = notFoundResponse.Message;
-
-                        throw new NotFoundException(notFoundResponse.Message, notFoundResponse.Id.Value);
                     }
                 }
                 else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)

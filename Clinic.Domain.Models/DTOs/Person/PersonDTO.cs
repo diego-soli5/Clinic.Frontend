@@ -5,6 +5,7 @@ namespace Clinic.Domain.Models.DTOs.Person
 {
     public class PersonDTO
     {
+        public int Id { get; set; }
         [Display(Name = "Identificación:")]
         public int Identification { get; set; }
 
@@ -26,6 +27,9 @@ namespace Clinic.Domain.Models.DTOs.Person
         [Display(Name = "Fecha de Nacimiento:")]
         public DateTime Birthdate { get; set; }
 
+        public string ImageName { get; set; }
+
+        [Display(Name = "Nombre Completo")]
         public string FullName => $"{Names} {Surnames}";
         public string FormatedBirthdate => Birthdate.ToShortDateString();
     }

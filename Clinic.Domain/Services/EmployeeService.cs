@@ -54,6 +54,11 @@ namespace Clinic.Domain.Services
 
             var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url, authToken: token);
 
+            if(apiResponse.StatusCode == StatusCodes.Status404NotFound)
+            {
+                throw new NotFoundException(apiResponse.Message, id);
+            }
+
             EmployeeEditViewModel oViewModel = new()
             {
                 Employee = apiResponse.Data,
@@ -77,6 +82,11 @@ namespace Clinic.Domain.Services
 
             var apiResponse = await _repository.Get<EmployeeDTO>(url, authToken: token);
 
+            if (apiResponse.StatusCode == StatusCodes.Status404NotFound)
+            {
+                throw new NotFoundException(apiResponse.Message, id);
+            }
+
             EmployeeDetailsViewModel oViewModel = new()
             {
                 Employee = apiResponse.Data,
@@ -91,21 +101,27 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_employeeRoutes.Employee}/{model.Id}";
 
-            return await _repository.Put(url, model, token);
+            var apiResponse = await _repository.Put(url, model, token);
+
+            return apiResponse;
         }
 
         public async Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model, string token)
         {
             string url = _employeeRoutes.Employee;
 
-            return await _repository.Post(url, model, token);
+            var apiResponse = await _repository.Post(url, model, token);
+
+            return apiResponse;
         }
 
         public async Task<DefaultDeleteApiResponse> DeleteAsync(int id, string password, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            return await _repository.Delete(url, new { password }, token);
+            var apiResponse = await _repository.Delete(url, new { password }, token);
+
+            return apiResponse;
         }
 
         #region DESECHADO

@@ -1,0 +1,92 @@
+﻿@model Clinic.Domain.Models.DTOs.Person.PersonDTO
+@{
+    ViewData["Title"] = "Mi Perfil";
+
+    string imgRoute = "/img/noimage.png";
+    string buttonAndModalText = "Agregar Imagen";
+
+    if (Model.ImageName?.Length > 0)
+    {
+        imgRoute = @Url.Action("GetProfileImage", "Resource", new { id = Model.Id });
+        buttonAndModalText = "Cambiar Imagen";
+    }
+}
+
+<div class="card card-blue">
+    <div class="card-header">
+        <h4>Información</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-5 order-sm-2 mb-3">
+                <div class="text-center">
+                    <img src="@imgRoute" alt="User Image" class="img-fluid img-thumbnail" id="userImage" />
+                    <div>
+                        <button type="button" class="btn btn-success btn-sm mt-3" data-toggle="modal" data-target="#modalImg" id="btnImg">@buttonAndModalText</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-7 order-md-1">
+                <div class="form-group">
+                    <label asp-for="Identification"></label>
+                    <input asp-for="Identification" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Birthdate"></label>
+                    <input asp-for="Birthdate" type="date" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" disabled />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address"></label>
+                    <input asp-for="Address" class="form-control" disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalImg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@buttonAndModalText</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" id="frmImage">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="image" id="image" />
+                    </div>
+                    <div class="form-group">
+                        <img id="previewImage" class="img-fluid img-thumbnail" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" form="frmImage">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/account.js"></script>
+}

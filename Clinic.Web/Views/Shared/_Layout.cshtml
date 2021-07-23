@@ -10,18 +10,26 @@
 
     <script src="https://kit.fontawesome.com/acd9e78a3c.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/custom.css" rel="stylesheet" />
 
 </head>
 <body class="hold-transition sidebar-mini">
     @using System.Security.Claims
+    @using Clinic.Domain.Models.Enumerations
     @{
         string fullName = "";
+        string imgRoute = "/img/genericProfileImage.png";
 
         if (User.Identity.IsAuthenticated)
         {
             fullName = User.FindFirst(ClaimTypes.Name).Value;
+
+            if (User.FindFirstValue("ImageName")?.Length > 0)
+            {
+                imgRoute = @Url.Action("GetProfileImage", "Resource", new { id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) });
+            }
         }
     }
 
@@ -61,10 +69,10 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="~/img/avatar5.png" class="img-circle elevation-2" alt="User Image">
+                        <img src="@imgRoute" class="img-circle elevation-2" alt="User Image" id="userImage">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">@fullName</a>
+                        <a asp-area="" asp-controller="Account" asp-action="Profile" class="d-block">@fullName</a>
                     </div>
                 </div>
 
@@ -79,22 +87,29 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="nav-link">
-                                <i class="nav-icon far fa-address-book"></i>
-                                <p>
-                                    Empleados
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a asp-area="Client" asp-controller="Medic" asp-action="Index" class="nav-link">
-                                <i class="nav-icon fas fa-user-md"></i>
-                                <p>
-                                    Médicos
-                                </p>
-                            </a>
-                        </li>
+                        @if (User.IsInRole(nameof(AppUserRole.Administrator)) || User.IsInRole(nameof(EmployeeRole.Secretary)))
+                        {
+                            @if (User.IsInRole(nameof(AppUserRole.Administrator)))
+                            {
+                                <li class="nav-item">
+                                    <a asp-area="Admin" asp-controller="Employee" asp-action="Index" class="nav-link">
+                                        <i class="nav-icon far fa-address-book"></i>
+                                        <p>
+                                            Empleados
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+
+                            <li class="nav-item">
+                                <a asp-area="Client" asp-controller="Medic" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon fas fa-user-md"></i>
+                                    <p>
+                                        Médicos
+                                    </p>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

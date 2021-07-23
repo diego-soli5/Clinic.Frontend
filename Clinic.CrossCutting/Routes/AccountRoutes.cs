@@ -29,6 +29,22 @@ namespace Clinic.CrossCutting.Routes
             }
         }
 
+        public string GetCurrentUser
+        {
+            get
+            {
+                return $"{Account}/{nameof(GetCurrentUser)}/";
+            }
+        }
+
+        public string ChangeImage
+        {
+            get
+            {
+                return $"{Account}/{nameof(ChangeImage)}/";
+            }
+        }
+
         public string Logout
         {
             get
