@@ -14,20 +14,20 @@ namespace Clinic.Domain.Services
     {
         private readonly IRepository _repository;
         private readonly IUriGenerator _uriGenerator;
-        private readonly EmployeeRoutes _employeeRoutes;
+        private readonly ApiRoutes _routes;
 
         public EmployeeService(IRepository repository,
-                               EmployeeRoutes employeeRoutes,
+                               ApiRoutes routes,
                                IUriGenerator uriGenerator)
         {
             _repository = repository;
-            _employeeRoutes = employeeRoutes;
+            _routes = routes;
             _uriGenerator = uriGenerator;
         }
 
         public async Task<DefaultApiResponseResult<IEnumerable<EmployeeListDTO>>> GetAllAsync(EmployeeQueryFilter filters, string token)
         {
-            string url = _uriGenerator.CreatePagedListUri(_employeeRoutes.Employee, filters).ToString();
+            string url = _uriGenerator.CreatePagedListUri(_routes.EmployeeRoutes.Employee, filters).ToString();
 
             var response = await _repository.Get<IEnumerable<EmployeeListDTO>>(url, authToken: token);
 
@@ -38,7 +38,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult<EmployeeUpdateDTO>> GetByIdToUpdateAsync(int id, string token)
         {
-            string url = $"{_employeeRoutes.Employee}/{id}";
+            string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 
             var queryParams = new
             {
@@ -56,7 +56,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult<EmployeeDTO>> GetByIdAsync(int id, string token)
         {
-            string url = $"{_employeeRoutes.Employee}/{id}";
+            string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 
             var queryParams = new
             {
@@ -74,7 +74,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token)
         {
-            string url = $"{_employeeRoutes.Employee}/{model.Id}";
+            string url = $"{_routes.EmployeeRoutes.Employee}/{model.Id}";
 
             var response = await _repository.Put(url, model, token);
 
@@ -85,7 +85,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token)
         {
-            string url = _employeeRoutes.Employee;
+            string url = _routes.EmployeeRoutes.Employee;
 
             var response = await _repository.Post(url, model, token);
 
@@ -96,7 +96,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult> DeleteAsync(int id, string password, string token)
         {
-            string url = $"{_employeeRoutes.Employee}/{id}";
+            string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 
             var response = await _repository.Delete(url, new { password }, token);
 

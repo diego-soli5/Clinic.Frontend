@@ -12,10 +12,10 @@ namespace Clinic.Domain.Services
     public class AccountService : ServiceMiddleware, IAccountService
     {
         private readonly IRepository _repository;
-        private readonly AccountRoutes _routes;
+        private readonly ApiRoutes _routes;
 
         public AccountService(IRepository repository,
-                              AccountRoutes routes)
+                              ApiRoutes routes)
         {
             _repository = repository;
             _routes = routes;
@@ -23,7 +23,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password)
         {
-            string url = _routes.Authenticate;
+            string url = _routes.AccountRoutes.Authenticate;
 
             var response = await _repository.Post<LoginResultDTO>(url, new { emailOrIdentification, password });
 
@@ -34,7 +34,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken)
         {
-            string url = $"{_routes.GetCurrentUser}{id}";
+            string url = $"{_routes.AccountRoutes.GetCurrentUser}{id}";
 
             var response = await _repository.Get<PersonDTO>(url, authToken: authToken);
 
@@ -45,7 +45,7 @@ namespace Clinic.Domain.Services
 
         public async Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id, string authToken)
         {
-            string url = $"{_routes.ChangeImage}{id}";
+            string url = $"{_routes.AccountRoutes.ChangeImage}{id}";
 
             var response = await _repository.Post(url, new[] { image }, authToken);
 

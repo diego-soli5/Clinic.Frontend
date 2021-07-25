@@ -5,15 +5,33 @@ namespace Clinic.CrossCutting.Routes
 {
     public class ApiRoutes
     {
-        private readonly ApiOptions _apiOptions;
+        private readonly AccountRoutes _accountRoutes;
+        private readonly ConsultingRoomRoutes _consultingRoomRoutes;
+        private readonly EmployeeRoutes _employeeRoutes;
+        private readonly MedicalSpecialtyRoutes _medicalSpecialtyRoutes;
+        private readonly MedicRoutes _medicRoutes;
+        private readonly ResourceRoutes _resourceRoutes;
 
-        public ApiRoutes(IOptions<ApiOptions> options)
+        public ApiRoutes(AccountRoutes accountRoutes,
+                         ConsultingRoomRoutes consultingRoomRoutes,
+                         EmployeeRoutes employeeRoutes,
+                         MedicalSpecialtyRoutes medicalSpecialtyRoutes,
+                         MedicRoutes medicRoutes,
+                         ResourceRoutes resourceRoutes)
         {
-            _apiOptions = options.Value;
-
-            Employee = $"{_apiOptions.Domain}/api/Employee";
+            _accountRoutes = accountRoutes;
+            _consultingRoomRoutes = consultingRoomRoutes;
+            _employeeRoutes = employeeRoutes;
+            _medicalSpecialtyRoutes = medicalSpecialtyRoutes;
+            _medicRoutes = medicRoutes;
+            _resourceRoutes = resourceRoutes;
         }
 
-        public string Employee { get; private set; }
+        public AccountRoutes AccountRoutes => _accountRoutes;
+        public ConsultingRoomRoutes ConsultingRoomRoutes => _consultingRoomRoutes;
+        public EmployeeRoutes EmployeeRoutes => _employeeRoutes;
+        public MedicalSpecialtyRoutes MedicalSpecialtyRoutes => _medicalSpecialtyRoutes;
+        public MedicRoutes MedicRoutes => _medicRoutes;
+        public ResourceRoutes ResourceRoutes => _resourceRoutes;
     }
 }

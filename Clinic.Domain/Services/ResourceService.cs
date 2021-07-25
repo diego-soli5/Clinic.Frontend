@@ -9,11 +9,11 @@ namespace Clinic.Domain.Services
     public class ResourceService : IResourceService
     {
         private readonly IRepository _repository;
-        private readonly ResourceRoutes _routes;
+        private readonly ApiRoutes _routes;
         private readonly IUriGenerator _uriGenerator;
 
         public ResourceService(IRepository repository,
-                               ResourceRoutes routes,
+                               ApiRoutes routes,
                                IUriGenerator uriGenerator)
         {
             _repository = repository;
@@ -23,7 +23,7 @@ namespace Clinic.Domain.Services
 
         public async Task<(byte[], string)> GetProfileImage(int id, string authToken)
         {
-            string url = _uriGenerator.AddQueryStringParams(_routes.Resource, new { id }).ToString();
+            string url = _uriGenerator.AddQueryStringParams(_routes.ResourceRoutes.Resource, new { id }).ToString();
 
             var image = await _repository.Get(url, authToken);
 
