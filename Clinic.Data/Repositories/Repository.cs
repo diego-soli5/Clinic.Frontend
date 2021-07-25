@@ -10,7 +10,6 @@ using Clinic.Data.Abstractions;
 using Clinic.Domain.Models.Responses.Api;
 using Clinic.CrossCutting.CustomExceptions;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 
 namespace Clinic.Data.Repositories
 {
