@@ -8,6 +8,7 @@ namespace Clinic.Domain.Models.ViewModels.Admin.Employee
     public class EmployeeEditViewModel
     {
         public EmployeeUpdateDTO Employee { get; set; }
+        public string Message { get; set; }
         public List<SelectListItem> SelectListEmployeeRole
         {
             get
@@ -29,8 +30,6 @@ namespace Clinic.Domain.Models.ViewModels.Admin.Employee
                 };
             }
         }
-        public bool Success { get; set; }
-        public string Message { get; set; }
 
         public EmployeeEditViewModel()
         {

@@ -25,118 +25,139 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var oVM = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active), CurrentToken);
+            var oViewModel = new EmployeeIndexViewModel();
 
-            return View(oVM);
+            var response = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active), CurrentToken);
+
+            oViewModel.Employees = response.Data;
+            oViewModel.Metadata = response.Metadata;
+
+            return View(oViewModel);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            var oVM = new EmployeeCreateViewModel();
+            var oViewModel = new EmployeeCreateViewModel();
 
-            return View(oVM);
+            return View(oViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EmployeeCreateDTO model)
         {
-            EmployeeCreateViewModel oVM;
+            EmployeeCreateViewModel oViewModel;
 
             if (!ModelState.IsValid)
             {
-                oVM = new EmployeeCreateViewModel(model);
+                oViewModel = new EmployeeCreateViewModel(model);
 
-                return View(oVM);
+                return View(oViewModel);
             }
 
             var response = await _employeeService.CreateAsync(model, CurrentToken);
 
-            if (response.Success)
+            if (!response.Success)
             {
-                if (model.EmployeeRole == EmployeeRole.Medic)
-                    TempData["IdMedic"] = response.NewResourceId;
+                oViewModel = new EmployeeCreateViewModel(model)
+                {
+                    Message = response.Message
+                };
 
-                TempData["EmployeeMessage"] = $"El empleado {model.Person.Names} se agregó correctamente!";
-
-                return RedirectToAction(nameof(Index));
+                return View(oViewModel);
             }
 
-            oVM = new EmployeeCreateViewModel(model)
-            {
-                Message = response.Message
-            };
+            if (model.EmployeeRole == EmployeeRole.Medic)
+                TempData["IdMedic"] = response.NewResourceId;
 
-            return View(oVM);
+            TempData["EmployeeMessage"] = $"El empleado {model.Person.Names} se agregó correctamente!";
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
-        {
-            var oVM = await _employeeService.GetByIdToUpdateAsync(id, CurrentToken);
+        { 
+            var response = await _employeeService.GetByIdToUpdateAsync(id, CurrentToken);
 
-            if (!oVM.Success)
+            if (!response.Success)
             {
-                TempData["ErrorEmployeeMessage"] = oVM.Message;
+                TempData["ErrorEmployeeMessage"] = response.Message;
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(oVM);
+            var oViewModel = new EmployeeEditViewModel
+            {
+                Employee = response.Data
+            };
+
+            return View(oViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EmployeeUpdateDTO model)
         {
-            EmployeeEditViewModel oVM;
+            EmployeeEditViewModel oViewModel;
 
             if (!ModelState.IsValid)
             {
-                oVM = new EmployeeEditViewModel(model);
+                oViewModel = new EmployeeEditViewModel(model);
 
-                return View(oVM);
+                return View(oViewModel);
             }
 
             var response = await _employeeService.UpdateAsync(model, CurrentToken);
 
-            if (response.Success)
+            if (!response.Success)
             {
-                TempData["EmployeeMessage"] = $"El empleado {model.Person.Names} se actualizó correctamente!";
+                oViewModel = new EmployeeEditViewModel(model)
+                {
+                    Message = response.Message
+                };
 
-                return RedirectToAction(nameof(Index));
+                return View(oViewModel);
             }
 
-            oVM = new EmployeeEditViewModel(model)
-            {
-                Message = response.Message
-            };
+            TempData["EmployeeMessage"] = $"El empleado {model.Person.Names} se actualizó correctamente!";
 
-            return View(oVM);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var oVM = await _employeeService.GetByIdAsync(id, CurrentToken);
+            var response = await _employeeService.GetByIdAsync(id, CurrentToken);
 
-            if (!oVM.Success)
+            if (!response.Success)
             {
-                TempData["ErrorEmployeeMessage"] = oVM.Message;
+                TempData["ErrorEmployeeMessage"] = response.Message;
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(oVM);
+            var oViewModel = new EmployeeDetailsViewModel
+            {
+                Employee = response.Data
+            };
+
+            return View(oViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTable(EmployeeQueryFilter filter)
         {
-            var oVM = await _employeeService.GetAllAsync(filter, CurrentToken);
+            var response = await _employeeService.GetAllAsync(filter, CurrentToken);
 
-            return PartialView("_EmployeePagedTablePartial", oVM);
+            var oViewModel = new EmployeeIndexViewModel
+            {
+                Employees = response.Data,
+                Metadata = response.Metadata
+            };
+
+            return PartialView("_EmployeePagedTablePartial", oViewModel);
         }
 
         #region API ACTIONS
@@ -160,63 +181,6 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
         }
-        #endregion
-
-        #region DESECHADO
-        //Codigo comentado por posibilidad de reintegrar la funcionalidad
-        /*
-        [HttpPost]
-        [Route("api/admin/employee/fire/{id}")]
-        public async Task<IActionResult> Fire(int id)
-        {
-            var response = await _employeeService.Fire(id, GetCurrentToken());
-
-            if (response.StatusCode == StatusCodes.Status204NoContent)
-            {
-                response.Message = "Se despidió exitosamente!";
-
-                return Ok(response);
-            }
-            else if (response.StatusCode == StatusCodes.Status400BadRequest)
-            {
-                return BadRequest(response);
-            }
-            else if (response.StatusCode == StatusCodes.Status404NotFound)
-            {
-                return NotFound(response);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-
-        [HttpPost]
-        [Route("api/admin/employee/activate/{id}")]
-        public async Task<IActionResult> Activate(int id)
-        {
-            var response = await _employeeService.Activate(id, GetCurrentToken());
-
-            if (response.StatusCode == StatusCodes.Status204NoContent)
-            {
-                response.Message = "Se activó exitosamente!";
-
-                return Ok(response);
-            }
-            else if (response.StatusCode == StatusCodes.Status400BadRequest)
-            {
-                return BadRequest(response);
-            }
-            else if (response.StatusCode == StatusCodes.Status404NotFound)
-            {
-                return NotFound(response);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
-            }
-        }
-        */
         #endregion
     }
 }

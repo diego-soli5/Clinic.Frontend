@@ -28,19 +28,6 @@
                         <td>@emp.EmployeeRole.ToString()</td>
                         <td>
                             <div class="row">
-                                @* Codigo comentado por posibilidad de reintegrar la funcionalidad *@
-                                @* 
-                                <div class="col-xl-6">
-                                    @if (emp.EmployeeStatus == Clinic.Domain.Models.Enumerations.EmployeeStatus.Fired)
-                                    {
-                                        <button class="btn btn-info btn-block btn-sm" data-id="@emp.Id" id="btnActivate">Activar</button>
-                                    }
-                                    else
-                                    {
-                                        <button class="btn btn-danger btn-block btn-sm" data-id="@emp.Id" id="btnFire">Despedir</button>
-                                    }
-                                </div>
-                                *@
                                 <div class="col-xl-12">
                                     <a asp-area="Admin" asp-controller="Employee" asp-action="Edit" asp-route-id="@emp.Id" class="btn btn-success btn-block btn-sm">Editar</a>
                                 </div>

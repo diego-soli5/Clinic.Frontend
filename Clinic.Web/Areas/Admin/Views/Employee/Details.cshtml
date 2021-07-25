@@ -83,17 +83,6 @@
 @section Scripts{
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
-    @if (Model.Message?.Length > 0)
-    {
-
-        <script>
-            $(function () {
-                swalAlert("@Model.Message", false);
-            });
-        </script>
-
-    }
-
     <script>
         $(function () {
             document.getElementById("btnDelete").addEventListener("click", function () {
