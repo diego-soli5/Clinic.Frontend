@@ -1,23 +1,19 @@
-﻿using Clinic.CrossCutting.CustomExceptions;
-using Clinic.Domain.Abstractions;
+﻿using Clinic.Domain.Abstractions;
 using Clinic.Domain.Models.DTOs.Employee;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.QueryFilters;
 using Clinic.Domain.Models.ViewModels.Admin.Employee;
+using Clinic.Web.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System.Linq;
-using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = nameof(AppUserRole.Administrator))]
-    public class EmployeeController : Controller
+    public class EmployeeController : BaseController
     {
         private readonly IEmployeeService _employeeService;
 
@@ -163,15 +159,6 @@ namespace Clinic.Web.Areas.Admin.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
-        }
-        #endregion
-
-        #region UTILITY METHODS
-        private string GetCurrentToken()
-        {
-            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
-
-            return token;
         }
         #endregion
 

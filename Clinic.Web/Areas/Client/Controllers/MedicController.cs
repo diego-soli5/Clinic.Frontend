@@ -2,19 +2,16 @@
 using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.QueryFilters;
-using Clinic.Domain.Models.ViewModels.Client.Medic;
+using Clinic.Web.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Areas.Client.Controllers
 {
     [Area("Client")]
     [Authorize(Roles = nameof(EmployeeRole.Secretary) + "," + nameof(AppUserRole.Administrator))]
-    public class MedicController : Controller
+    public class MedicController : BaseController
     {
         private readonly IMedicService _medicService;
 
@@ -94,14 +91,5 @@ namespace Clinic.Web.Areas.Client.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-        #region UTILITY METHODS
-        private string GetCurrentToken()
-        {
-            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
-
-            return token;
-        }
-        #endregion
     }
 }

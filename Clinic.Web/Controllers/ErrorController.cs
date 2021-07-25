@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Web.Controllers
 {
-    public class ErrorController : Controller
+    public class ErrorController : BaseController
     {
         public async Task<IActionResult> Handle()
         {

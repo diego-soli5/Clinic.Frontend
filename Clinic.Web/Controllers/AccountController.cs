@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Clinic.Web.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IAccountService _service;
 
@@ -129,28 +129,6 @@ namespace Clinic.Web.Controllers
         }
         #endregion
 
-        #region UTILITY METHODS
-        private string[] ValidImageTypes()
-        {
-            return new[]
-            {
-                "image/png",
-                "image/jpg",
-                "image/jpeg"
-            };
-        }
-
-        private string GetCurrentToken()
-        {
-            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
-
-            return token;
-        }
-
-        private int GetCurrentUserId()
-        {
-            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        }
-        #endregion
+        
     }
 }

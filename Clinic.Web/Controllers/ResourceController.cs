@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Controllers
@@ -32,7 +33,7 @@ namespace Clinic.Web.Controllers
         #region UTILITY METHODS
         private string GetCurrentToken()
         {
-            string token = User.Claims.FirstOrDefault(x => x.Type == "Token").Value;
+            string token = User.FindFirstValue("Token");
 
             return token;
         }
