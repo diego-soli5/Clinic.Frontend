@@ -24,12 +24,12 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Medic.IdMedicalSpecialty"></label>
-                        @Html.DropDownListFor(x => x.Medic.IdMedicalSpecialty, Model.MedicalSpecialties, "Seleccionar", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.Medic.IdMedicalSpecialty, Model.MedicalSpecialtiesSelectListItems, "Seleccionar", new { @class = "form-control" })
                         <span asp-validation-for="Medic.IdMedicalSpecialty" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Medic.IdConsultingRoom"></label>
-                        @Html.DropDownListFor(x => x.Medic.IdConsultingRoom, Model.ConsultingRooms, "Seleccionar", new { @class = "form-control" })
+                        @Html.DropDownListFor(x => x.Medic.IdConsultingRoom, Model.ConsultingRoomSelectListItems, "Seleccionar", new { @class = "form-control" })
                         <span asp-validation-for="Medic.IdConsultingRoom" class="text-danger"></span>
                     </div>
                 </form>

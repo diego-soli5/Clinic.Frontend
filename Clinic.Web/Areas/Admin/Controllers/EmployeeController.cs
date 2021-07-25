@@ -25,7 +25,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var oVM = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active), GetCurrentToken());
+            var oVM = await _employeeService.GetAllAsync(new EmployeeQueryFilter(1, EmployeeStatus.Active), CurrentToken);
 
             return View(oVM);
         }
@@ -51,7 +51,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return View(oVM);
             }
 
-            var response = await _employeeService.CreateAsync(model, GetCurrentToken());
+            var response = await _employeeService.CreateAsync(model, CurrentToken);
 
             if (response.Success)
             {
@@ -74,7 +74,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var oVM = await _employeeService.GetByIdToUpdateAsync(id, GetCurrentToken());
+            var oVM = await _employeeService.GetByIdToUpdateAsync(id, CurrentToken);
 
             if (!oVM.Success)
             {
@@ -99,7 +99,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
                 return View(oVM);
             }
 
-            var response = await _employeeService.UpdateAsync(model, GetCurrentToken());
+            var response = await _employeeService.UpdateAsync(model, CurrentToken);
 
             if (response.Success)
             {
@@ -119,7 +119,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var oVM = await _employeeService.GetByIdAsync(id, GetCurrentToken());
+            var oVM = await _employeeService.GetByIdAsync(id, CurrentToken);
 
             if (!oVM.Success)
             {
@@ -134,7 +134,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTable(EmployeeQueryFilter filter)
         {
-            var oVM = await _employeeService.GetAllAsync(filter, GetCurrentToken());
+            var oVM = await _employeeService.GetAllAsync(filter, CurrentToken);
 
             return PartialView("_EmployeePagedTablePartial", oVM);
         }
@@ -145,7 +145,7 @@ namespace Clinic.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, [FromBody] EmployeeDeleteDTO model)
         {
-            var response = await _employeeService.DeleteAsync(id, model.Password, GetCurrentToken());
+            var response = await _employeeService.DeleteAsync(id, model.Password, CurrentToken);
 
             if (response.StatusCode == StatusCodes.Status204NoContent)
             {

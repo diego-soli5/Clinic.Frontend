@@ -10,7 +10,7 @@ namespace Clinic.Domain.Models.ViewModels.Client.Medic
     public class MedicIndexViewModel
     {
         [Display(Name = "Especialidad")]
-        public IEnumerable<SelectListItem> MedicSpecialties { get; set; }
+        public IEnumerable<SelectListItem> MedicalSpecialtiesSelectListItems { get; set; }
         public IEnumerable<MedicListDTO> Medics { get; set; }
         public IEnumerable<MedicDisplayPendingForUpdateDTO> MedicsPendingForUpdate { get; set; }
         public MedicQueryFilter QueryFilters { get; set; }

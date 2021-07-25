@@ -2,9 +2,13 @@
 using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.Enumerations;
 using Clinic.Domain.Models.QueryFilters;
+using Clinic.Domain.Models.ViewModels.Client.Medic;
 using Clinic.Web.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Clinic.Web.Areas.Client.Controllers
@@ -20,44 +24,64 @@ namespace Clinic.Web.Areas.Client.Controllers
             _medicService = medicService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var oVM = await _medicService.GetAllAsync(new MedicQueryFilter(1), GetCurrentToken());
+            var oViewModel = new MedicIndexViewModel();
 
-            oVM.MedicsPendingForUpdate = await _medicService.GetAllMedicsPendingForUpdate(GetCurrentToken());
+            var medicListResponse = await _medicService.GetAllAsync(new MedicQueryFilter(1), CurrentToken);
+            var medicsPendingForUpdateResponse = await _medicService.GetAllMedicsPendingForUpdate(CurrentToken);
 
-            return View(oVM);
+            oViewModel.Medics = medicListResponse.Data;
+            oViewModel.Metadata = medicListResponse.Metadata;
+            oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+            oViewModel.MedicsPendingForUpdate = medicsPendingForUpdateResponse.Data;
+
+            return View(oViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTable(MedicQueryFilter filters)
         {
-            var oVM = await _medicService.GetAllAsync(filters, GetCurrentToken());
+            var oViewModel = new MedicIndexViewModel();
 
-            return PartialView("_MedicPagedTablePartial", oVM);
+            var medicListResponse = await _medicService.GetAllAsync(filters, CurrentToken);
+
+            oViewModel.Medics = medicListResponse.Data;
+            oViewModel.Metadata = medicListResponse.Metadata;
+
+            return PartialView("_MedicPagedTablePartial", oViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPendingForUpdate()
         {
-            var oVM = await _medicService.GetAllMedicsPendingForUpdate(GetCurrentToken());
+            var medicsPendingForUpdateResponse = await _medicService.GetAllMedicsPendingForUpdate(CurrentToken);
 
-            return PartialView("_MedicPendingUpdatePartial", oVM);
+            var medicsPendingForUpdateList = medicsPendingForUpdateResponse.Data;
+
+            return PartialView("_MedicPendingUpdatePartial", medicsPendingForUpdateList);
         }
 
         [HttpGet]
         public async Task<IActionResult> PendingUpdate(int id)
         {
-            var oVM = await _medicService.GetMedicPendingForUpdate(id, GetCurrentToken());
+            var oViewModel = new MedicPendingUpdateViewModel();
 
-            if (!oVM.Success)
+            var medicPendingResponse = await _medicService.GetMedicPendingForUpdate(id, CurrentToken);
+
+            if (!medicPendingResponse.Success)
             {
-                TempData["ErrorMedicMessage"] = oVM.Message;
+                TempData["ErrorMedicMessage"] = medicPendingResponse.Message;
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(oVM);
+            oViewModel.ConsultingRoomSelectListItems = await GetConsultingRoomsSLI();
+            oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+            oViewModel.Medic = medicPendingResponse.Data;
+
+            return View(oViewModel);
         }
 
         [HttpPost]
@@ -66,19 +90,25 @@ namespace Clinic.Web.Areas.Client.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var oVM = await _medicService.GetMedicPendingForUpdate(model.IdEmployee, GetCurrentToken());
+                var oViewModel = new MedicPendingUpdateViewModel();
 
-                if (!oVM.Success)
+                var medicPendingResponse = await _medicService.GetMedicPendingForUpdate(model.IdEmployee, CurrentToken);
+
+                if (!medicPendingResponse.Success)
                 {
-                    TempData["ErrorMedicMessage"] = oVM.Message;
+                    TempData["ErrorMedicMessage"] = medicPendingResponse.Message;
 
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View(oVM);
+                oViewModel.ConsultingRoomSelectListItems = await GetConsultingRoomsSLI();
+                oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+                oViewModel.Medic = medicPendingResponse.Data;
+
+                return View(oViewModel);
             }
 
-            var response = await _medicService.UpdatePendingMedic(model, GetCurrentToken());
+            var response = await _medicService.UpdatePendingMedic(model, CurrentToken);
 
             if (!response.Success)
             {
@@ -91,5 +121,35 @@ namespace Clinic.Web.Areas.Client.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        #region UTILITY METHODS
+        private async Task<IEnumerable<SelectListItem>> GetMedicalSpecialtiesSLI()
+        {
+            var medicalSpecialtiesResponse = await _medicService.GetAllMedicalSpecialties(CurrentToken);
+
+            var lst = new List<SelectListItem>();
+
+            medicalSpecialtiesResponse.Data.ToList().ForEach(ms =>
+            {
+                lst.Add(new SelectListItem(ms.Name, ms.Id.ToString()));
+            });
+
+            return lst;
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetConsultingRoomsSLI()
+        {
+            var consultingRoomsResponse = await _medicService.GetAllConsultingRooms(CurrentToken);
+
+            var lst = new List<SelectListItem>();
+
+            consultingRoomsResponse.Data.ToList().ForEach(room =>
+            {
+                lst.Add(new SelectListItem(room.NameIdentifier, room.Id.ToString()));
+            });
+
+            return lst;
+        }
+        #endregion
     }
 }

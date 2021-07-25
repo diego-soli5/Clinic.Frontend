@@ -319,6 +319,7 @@ namespace Clinic.Data.Repositories
                     var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                     result.Message = notFoundResponse.Message;
+                    result.NotFoundResourceId = notFoundResponse.NotFoundResourceId;
                 }
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
@@ -336,7 +337,7 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -387,6 +388,7 @@ namespace Clinic.Data.Repositories
                     var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
                     result.Message = notFoundResponse.Message;
+                    result.NotFoundResourceId = notFoundResponse.NotFoundResourceId;
                 }
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
@@ -404,7 +406,7 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -424,6 +426,13 @@ namespace Clinic.Data.Repositories
             {
                 result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
             }
+
+            if (httpResponseMessage.Headers.Contains("X-Pagination"))
+            {
+                string jsonHeader = httpResponseMessage.Headers.GetValues("X-Pagination").FirstOrDefault();
+
+                result.Metadata = JsonConvert.DeserializeObject<Metadata>(jsonHeader);
+            }
         }
 
         private void GetApiResponseHeaders<TData>(DefaultApiResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
@@ -432,9 +441,19 @@ namespace Clinic.Data.Repositories
             {
                 result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
             }
+
+            if (httpResponseMessage.Headers.Contains("X-Pagination"))
+            {
+                string jsonHeader = httpResponseMessage.Headers.GetValues("X-Pagination").FirstOrDefault();
+
+                result.Metadata = JsonConvert.DeserializeObject<Metadata>(jsonHeader);
+            }
         }
         #endregion
 
         #endregion
     }
 }
+
+
+

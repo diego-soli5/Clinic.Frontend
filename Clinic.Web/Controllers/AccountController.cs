@@ -26,7 +26,7 @@ namespace Clinic.Web.Controllers
         {
             int idCurrentUser = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var userInfo = await _service.GetCurrentUser(idCurrentUser, GetCurrentToken());
+            var userInfo = await _service.GetCurrentUser(idCurrentUser, CurrentToken);
 
             return View(userInfo);
         }
@@ -109,7 +109,7 @@ namespace Clinic.Web.Controllers
                     Message = "Selecciona una imagen válida."
                 });
 
-            if (!ValidImageTypes().Any(x => x == image.ContentType))
+            if (!ValidImageTypes.Any(x => x == image.ContentType))
             {
                 return BadRequest(new
                 {
@@ -118,17 +118,17 @@ namespace Clinic.Web.Controllers
                 });
             }
 
-            var response = await _service.ChangeImage(image, GetCurrentUserId(), GetCurrentToken());
+            var response = await _service.ChangeImage(image, CurrentUserId, CurrentToken);
 
             if (response.Success)
             {
-                return Ok(new { Success = true, response.Message });
+                return Ok(new { response.Success, response.Message });
             }
 
             return StatusCode(response.StatusCode, new { response.Success, response.Message });
         }
         #endregion
 
-        
+
     }
 }

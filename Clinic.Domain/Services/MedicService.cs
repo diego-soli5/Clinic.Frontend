@@ -1,5 +1,4 @@
 ﻿using Clinic.CrossCutting.Abstractions;
-using Clinic.CrossCutting.CustomExceptions;
 using Clinic.CrossCutting.Routes;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Abstractions;
@@ -7,11 +6,7 @@ using Clinic.Domain.Models.DTOs.ConsultingRoom;
 using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.QueryFilters;
 using Clinic.Domain.Models.Responses;
-using Clinic.Domain.Models.ViewModels.Client.Medic;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Clinic.Domain.Services
@@ -37,27 +32,18 @@ namespace Clinic.Domain.Services
             _uriGenerator = uriGenerator;
         }
 
-        public async Task<MedicIndexViewModel> GetAllAsync(MedicQueryFilter filters, string authToken)
+        public async Task<DefaultApiResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken)
         {
             string url = _uriGenerator.CreatePagedListUri(_medicRoutes.Medic, filters).ToString();
 
-            var medicListReponse = await _repository.Get<IEnumerable<MedicListDTO>>(url, authToken: authToken);
+            var response = await _repository.Get<IEnumerable<MedicListDTO>>(url, authToken: authToken);
 
-            ValidateResponse(medicListReponse);
-            
-            var lstMedicSpecialties = await GetMedicalSpecialtiesSelectListItems(authToken);
+            ValidateResponse(response);
 
-            var viewModel = new MedicIndexViewModel
-            {
-                Medics = medicListReponse.Data,
-                Metadata = medicListReponse.Metadata,
-                MedicSpecialties = lstMedicSpecialties
-            };
-
-            return viewModel;
+            return response;
         }
 
-        public async Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken)
+        public async Task<DefaultApiResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken)
         {
             var queryParams = new
             {
@@ -70,10 +56,10 @@ namespace Clinic.Domain.Services
 
             ValidateResponse(response);
 
-            return response.Data;
+            return response;
         }
 
-        public async Task<MedicPendingUpdateViewModel> GetMedicPendingForUpdate(int idEmployee, string authToken)
+        public async Task<DefaultApiResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken)
         {
             string url = $"{_medicRoutes.Pending}{idEmployee}";
 
@@ -81,20 +67,7 @@ namespace Clinic.Domain.Services
 
             ValidateResponse(response);
 
-            var lstMedicSpecialtiesSelectListItems = await GetMedicalSpecialtiesSelectListItems(authToken);
-
-            var lstConsultingRoomsSelectListItems = await GetConsultingRoomsSelectListItems(authToken);
-
-            var viewModel = new MedicPendingUpdateViewModel
-            {
-                Medic = response.Data,
-                Success = response.Success,
-                Message = response.Message,
-                MedicalSpecialties = lstMedicSpecialtiesSelectListItems,
-                ConsultingRooms = lstConsultingRoomsSelectListItems
-            };
-
-            return viewModel;
+            return response;
         }
 
         public async Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
@@ -108,38 +81,22 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        #region UTILITY METHODS
-        private async Task<IEnumerable<SelectListItem>> GetMedicalSpecialtiesSelectListItems(string authToken)
+        public async Task<DefaultApiResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken)
         {
             var response = await _repository.Get<IEnumerable<MedicalSpecialtyListDTO>>(_medicalSpecialtyRoutes.MedicalSpecialty, authToken: authToken);
 
             ValidateResponse(response);
 
-            List<SelectListItem> lstMedicSpecialties = new List<SelectListItem>();
-
-            response.Data.ToList().ForEach(esp =>
-            {
-                lstMedicSpecialties.Add(new SelectListItem(esp.Name, esp.Id.ToString()));
-            });
-
-            return lstMedicSpecialties;
+            return response;
         }
 
-        private async Task<IEnumerable<SelectListItem>> GetConsultingRoomsSelectListItems(string authToken)
+        public async Task<DefaultApiResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken)
         {
             var response = await _repository.Get<IEnumerable<ConsultingRoomDTO>>(_consultingRoomRoutes.ConsultingRoom, authToken: authToken);
 
             ValidateResponse(response);
 
-            List<SelectListItem> lstConsultingRooms = new List<SelectListItem>();
-
-            response.Data.ToList().ForEach(room =>
-            {
-                lstConsultingRooms.Add(new SelectListItem(room.NameIdentifier, room.Id.ToString()));
-            });
-
-            return lstConsultingRooms;
+            return response;
         }
-        #endregion
     }
 }

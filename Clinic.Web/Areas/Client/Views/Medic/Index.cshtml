@@ -50,8 +50,8 @@
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label asp-for="MedicSpecialties"></label>
-                            @Html.DropDownList(nameof(Model.MedicSpecialties), Model.MedicSpecialties, "Todos", new { @class = "form-control", id = "medicalSpecialty" })
+                            <label asp-for="MedicalSpecialtiesSelectListItems"></label>
+                            @Html.DropDownList("MedicalSpecialties", Model.MedicalSpecialtiesSelectListItems, "Todos", new { @class = "form-control", id = "medicalSpecialty" })
                         </div>
                     </div>
 

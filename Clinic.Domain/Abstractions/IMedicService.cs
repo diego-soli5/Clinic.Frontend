@@ -1,7 +1,7 @@
-﻿using Clinic.Domain.Models.DTOs.Medic;
+﻿using Clinic.Domain.Models.DTOs.ConsultingRoom;
+using Clinic.Domain.Models.DTOs.Medic;
 using Clinic.Domain.Models.QueryFilters;
 using Clinic.Domain.Models.Responses;
-using Clinic.Domain.Models.ViewModels.Client.Medic;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,9 +9,11 @@ namespace Clinic.Domain.Abstractions
 {
     public interface IMedicService
     {
-        Task<MedicIndexViewModel> GetAllAsync(MedicQueryFilter filters, string authToken);
-        Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken);
-        Task<MedicPendingUpdateViewModel> GetMedicPendingForUpdate(int idEmployee, string authToken);
+        Task<DefaultApiResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken);
+        Task<DefaultApiResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken);
+        Task<DefaultApiResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken);
         Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
+        Task<DefaultApiResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken);
+        Task<DefaultApiResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken);
     }
 }

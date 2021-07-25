@@ -5,26 +5,20 @@ namespace Clinic.Web.Controllers
 {
     public class BaseController : Controller
     {
-        protected string GetCurrentToken()
-        {
-            string token = User.FindFirstValue("Token");
+        protected string CurrentToken => User.FindFirstValue("Token");
+        protected int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return token;
-        }
-
-        protected int GetCurrentUserId()
+        protected string[] ValidImageTypes
         {
-            return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        }
-
-        protected string[] ValidImageTypes()
-        {
-            return new[]
+            get
             {
-                "image/png",
-                "image/jpg",
-                "image/jpeg"
-            };
+                return new[] {
+
+                    "image/png",
+                    "image/jpg",
+                    "image/jpeg"
+                };
+            }
         }
     }
 }
