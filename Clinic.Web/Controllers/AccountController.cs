@@ -24,11 +24,9 @@ namespace Clinic.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
-            int idCurrentUser = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var response = await _service.GetCurrentUser(CurrentUserId, CurrentToken);
 
-            var userInfo = await _service.GetCurrentUser(idCurrentUser, CurrentToken);
-
-            return View(userInfo);
+            return View(response.Data);
         }
 
         [HttpGet]

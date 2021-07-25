@@ -32,7 +32,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<PersonDTO> GetCurrentUser(int id, string authToken)
+        public async Task<DefaultApiResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken)
         {
             string url = $"{_routes.GetCurrentUser}{id}";
 
@@ -40,7 +40,7 @@ namespace Clinic.Domain.Services
 
             ValidateResponse(response);
 
-            return response.Data;
+            return response;
         }
 
         public async Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id, string authToken)

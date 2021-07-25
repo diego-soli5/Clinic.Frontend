@@ -9,7 +9,7 @@ namespace Clinic.Domain.Abstractions
     public interface IAccountService
     {
         Task<DefaultApiResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password);
-        Task<PersonDTO> GetCurrentUser(int id, string authToken);
+        Task<DefaultApiResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken);
         Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id,string authToken);
     }
 }
