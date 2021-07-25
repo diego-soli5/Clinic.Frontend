@@ -10,6 +10,7 @@ namespace Clinic.Domain.Models.Responses
         public int? NewResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;
+        public Metadata Metadata { get; set; }
 
         public DefaultApiResponseResult()
         {
@@ -25,6 +26,7 @@ namespace Clinic.Domain.Models.Responses
         public int? NewResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;
+        public Metadata Metadata { get; set; }
         public TData Data { get; set; }
 
         public DefaultApiResponseResult()

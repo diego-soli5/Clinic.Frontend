@@ -11,9 +11,9 @@ namespace Clinic.Domain.Abstractions
         Task<EmployeeIndexViewModel> GetAllAsync(EmployeeQueryFilter filters, string token);
         Task<EmployeeDetailsViewModel> GetByIdAsync(int id, string token);
         Task<EmployeeEditViewModel> GetByIdToUpdateAsync(int id, string token );
-        Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model, string token);
-        Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model, string token);
-        Task<DefaultDeleteApiResponse> DeleteAsync(int id, string pass, string token);
+        Task<DefaultApiResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token);
+        Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token);
+        Task<DefaultApiResponseResult> DeleteAsync(int id, string pass, string token);
 
         #region DESECHADO
         //Codigo comentado por posibilidad de reintegrar la funcionalidad

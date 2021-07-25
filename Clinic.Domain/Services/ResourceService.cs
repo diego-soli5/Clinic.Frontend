@@ -25,7 +25,7 @@ namespace Clinic.Domain.Services
         {
             string url = _uriGenerator.AddQueryStringParams(_routes.Resource, new { id }).ToString();
 
-            var image = await _repository.GetFile(url, authToken);
+            var image = await _repository.Get(url, authToken);
 
             return image;
         }

@@ -96,7 +96,7 @@ namespace Clinic.Domain.Services
             return viewModel;
         }
 
-        public async Task<DefaultPatchApiResponse> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
+        public async Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
         {
             string url = $"{_medicRoutes.Medic}/{model.IdEmployee}";
 

@@ -22,7 +22,7 @@ namespace Clinic.Domain.Services
             _routes = routes;
         }
 
-        public async Task<DataPostApiResponse<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password)
+        public async Task<DefaultApiResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password)
         {
             string url = _routes.Authenticate;
 
@@ -43,11 +43,11 @@ namespace Clinic.Domain.Services
             return apiResponse.Data;
         }
 
-        public async Task<DefaultPostApiResponse> ChangeImage(IFormFile image, int id, string authToken)
+        public async Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id, string authToken)
         {
             string url = $"{_routes.ChangeImage}{id}";
 
-            return await _repository.PostFile(url, image, authToken);
+            return await _repository.Post(url, new[] { image }, authToken);
         }
     }
 }

@@ -19,7 +19,9 @@ namespace Clinic.Domain.Services
         private readonly IUriGenerator _uriGenerator;
         private readonly EmployeeRoutes _employeeRoutes;
 
-        public EmployeeService(IRepository repository, EmployeeRoutes employeeRoutes, IUriGenerator uriGenerator)
+        public EmployeeService(IRepository repository,
+                               EmployeeRoutes employeeRoutes,
+                               IUriGenerator uriGenerator)
         {
             _repository = repository;
             _employeeRoutes = employeeRoutes;
@@ -97,7 +99,7 @@ namespace Clinic.Domain.Services
             return oViewModel;
         }
 
-        public async Task<DefaultPutApiResponse> UpdateAsync(EmployeeUpdateDTO model, string token)
+        public async Task<DefaultApiResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{model.Id}";
 
@@ -106,7 +108,7 @@ namespace Clinic.Domain.Services
             return apiResponse;
         }
 
-        public async Task<DefaultPostApiResponse> CreateAsync(EmployeeCreateDTO model, string token)
+        public async Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token)
         {
             string url = _employeeRoutes.Employee;
 
@@ -115,7 +117,7 @@ namespace Clinic.Domain.Services
             return apiResponse;
         }
 
-        public async Task<DefaultDeleteApiResponse> DeleteAsync(int id, string password, string token)
+        public async Task<DefaultApiResponseResult> DeleteAsync(int id, string password, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 

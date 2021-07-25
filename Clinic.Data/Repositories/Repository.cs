@@ -1,150 +1,82 @@
-﻿using Clinic.Domain.Models.Responses;
+﻿using Clinic.CrossCutting.CustomExceptions;
+using Clinic.Data.Abstractions;
+using Clinic.Domain.Models.Responses;
+using Clinic.Domain.Models.Responses.Api;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Clinic.Data.Abstractions;
-using Clinic.Domain.Models.Responses.Api;
-using Clinic.CrossCutting.CustomExceptions;
-using Microsoft.AspNetCore.Http;
 
 namespace Clinic.Data.Repositories
 {
     public class Repository : IRepository
     {
+        #region DEPENDENCIES
         private readonly IHttpClientFactory _clientFactory;
+        #endregion
 
+        #region CONSTRUCTOR
         public Repository(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
         }
+        #endregion
 
-        #region FILE METHODS
-        public async Task<DefaultPostApiResponse> PostFile(string url, IFormFile file, string authToken = null)
+        #region GET
+        public async Task<DefaultApiResponseResult<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultPostApiResponse defaultPostApiResponse = new DefaultPostApiResponse();
+            DefaultApiResponseResult<TData> result = new();
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
-
-            using (var form = new MultipartFormDataContent())
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
-                var fs = new StreamContent(file.OpenReadStream());
-
-                fs.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-                fs.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { Name = file.Name, FileName = file.FileName };
-
-                form.Add(fs, "image", file.FileName);
-
-                request.Content = form;
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
 
                 using (var client = _clientFactory.CreateClient())
                 {
                     if (!string.IsNullOrEmpty(authToken))
-                    {
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                    }
+                        AddBearerAuthorizationHeader(client, authToken);
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        defaultPostApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
 
-                        if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
-                        {
-                            defaultPostApiResponse.Success = true;
-
-                            if (httpResponseMessage.Content != null)
-                            {
-                                string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                                var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
-
-                                defaultPostApiResponse.Message = okResponse.Message;
-                            }
-
-                            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                            {
-                                defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                            }
-                        }
-                        else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            if (httpResponseMessage.Content != null)
-                            {
-                                string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                                var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                                defaultPostApiResponse.Message = notFoundResponse.Message;
-                            }
-                        }
-                        else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
-                        {
-                            defaultPostApiResponse.Success = true;
-
-                            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                            {
-                                defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                            }
-                        }
-                        else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                        {
-                            string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                            var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                            defaultPostApiResponse.Message = badRequestResponse.Message;
-                        }
-                        else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                        {
-                            //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
-                            //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
-                            //defaultPostApiResponse.Message = unauthorizedResponse.Message;
-
-                            throw new UnauthorizedException();
-                        }
-                        else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                        {
-                            defaultPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                        }
-                        else
-                        {
-                            defaultPostApiResponse.Message = $"El servidor respondió con un código de estado {defaultPostApiResponse.StatusCode}.";
-                        }
-
-                        return defaultPostApiResponse;
+                        return result;
                     }
                 }
             }
         }
 
-        public async Task<(byte[], string)> GetFile(string url, string authToken = null)
+        public async Task<(byte[], string)> Get(string url, string authToken = null)
         {
             byte[] fileBytes = null;
             string contentType = null;
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-            using (var client = _clientFactory.CreateClient())
+            using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
-                if (!string.IsNullOrEmpty(authToken))
+                using (var client = _clientFactory.CreateClient())
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
 
-                using (var httpResponseMessage = await client.SendAsync(request))
-                {
-                    if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+                    using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        if (httpResponseMessage.Content != null)
+                        if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
                         {
-                            fileBytes = await httpResponseMessage.Content.ReadAsByteArrayAsync();
-
-                            if (httpResponseMessage.Content.Headers.Contains("Content-Type"))
+                            if (httpResponseMessage.Content != null)
                             {
-                                contentType = httpResponseMessage.Content.Headers.GetValues("Content-Type").FirstOrDefault();
+                                fileBytes = await httpResponseMessage.Content.ReadAsByteArrayAsync();
+
+                                if (httpResponseMessage.Content.Headers.Contains("Content-Type"))
+                                {
+                                    contentType = httpResponseMessage.Content.Headers.GetValues("Content-Type").FirstOrDefault();
+                                }
                             }
                         }
                     }
@@ -155,455 +87,354 @@ namespace Clinic.Data.Repositories
         }
         #endregion
 
-        public async Task<DefaultGetApiResponse<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null)
+        #region POST
+        public async Task<DefaultApiResponseResult> Post(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultGetApiResponse<TData> defaultGetApiResponse = new DefaultGetApiResponse<TData>();
+            DefaultApiResponseResult result = new();
 
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            using (var request = new HttpRequestMessage(HttpMethod.Post, url))
+            {
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
 
-            if (dataToSend != null)
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+
+        public async Task<DefaultApiResponseResult<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null)
+        {
+            DefaultApiResponseResult<TData> result = new();
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, url))
+            {
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+
+        public async Task<DefaultApiResponseResult> Post(string url, IFormFile[] filesToSend, string authToken = null)
+        {
+            DefaultApiResponseResult result = new();
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post, url))
+            {
+                if (filesToSend != null)
+                    AddDataToRequest(request, filesToSend);
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region PUT
+        public async Task<DefaultApiResponseResult> Put(string url, object dataToSend = null, string authToken = null)
+        {
+            DefaultApiResponseResult result = new();
+
+            using (var request = new HttpRequestMessage(HttpMethod.Put, url))
+            {
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region PATCH
+        public async Task<DefaultApiResponseResult> Patch(string url, object dataToSend = null, string authToken = null)
+        {
+            DefaultApiResponseResult result = new();
+
+            using (var request = new HttpRequestMessage(HttpMethod.Patch, url))
+            {
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region DELETE
+        public async Task<DefaultApiResponseResult> Delete(string url, object dataToSend = null, string authToken = null)
+        {
+            DefaultApiResponseResult result = new();
+
+            using (var request = new HttpRequestMessage(HttpMethod.Delete, url))
+            {
+                if (dataToSend != null)
+                    AddDataToRequest(request, dataToSend);
+
+                using (var client = _clientFactory.CreateClient())
+                {
+                    if (!string.IsNullOrEmpty(authToken))
+                        AddBearerAuthorizationHeader(client, authToken);
+
+                    using (var httpResponseMessage = await client.SendAsync(request))
+                    {
+                        ManageApiResponseMessage(result, httpResponseMessage);
+                        GetApiResponseHeaders(result, httpResponseMessage);
+
+                        return result;
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region UTILITY METHODS
+        private void AddDataToRequest(HttpRequestMessage request, object dataToSend)
+        {
+            if (dataToSend == null)
+                throw new ArgumentNullException(nameof(dataToSend), $"Unexpected null value at {nameof(AddDataToRequest)}.");
+
+            if (dataToSend is IFormFile[])
+            {
+                var filesToSend = dataToSend as IFormFile[];
+
+                var form = new MultipartFormDataContent();
+
+                filesToSend.ToList().ForEach(file =>
+                {
+                    var streamContent = new StreamContent(file.OpenReadStream());
+
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                    streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { Name = file.Name, FileName = file.FileName };
+
+                    form.Add(streamContent, "file", file.FileName);
+
+                    request.Content = form;
+                });
+            }
+            else
             {
                 string json = JsonConvert.SerializeObject(dataToSend);
                 request.Content = new StringContent(json, Encoding.UTF8, "application/json");
             }
-
-            using (var client = _clientFactory.CreateClient())
-            {
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
-
-                var httpResponseMessage = await client.SendAsync(request);
-
-                defaultGetApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
-                {
-                    defaultGetApiResponse.Success = true;
-
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonOk = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOk);
-
-                        defaultGetApiResponse.Data = JsonConvert.DeserializeObject<TData>(okResponse.Data.ToString());
-                    }
-
-                    if (httpResponseMessage.Headers.Contains("X-Pagination"))
-                    {
-                        string jsonHeader = httpResponseMessage.Headers.GetValues("X-Pagination").FirstOrDefault();
-
-                        defaultGetApiResponse.Metadata = JsonConvert.DeserializeObject<Metadata>(jsonHeader);
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        defaultGetApiResponse.Message = notFoundResponse.Message;
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                    defaultGetApiResponse.Message = badRequestResponse.Message;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    defaultGetApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    throw new UnauthorizedException();
-                }
-                else
-                {
-                    defaultGetApiResponse.Message = $"El servidor respondió con un código de estado {defaultGetApiResponse.StatusCode}.";
-                }
-
-                return defaultGetApiResponse;
-            }
         }
 
-        public async Task<DefaultPostApiResponse> Post(string url, object dataToSend = null, string authToken = null)
+        private void AddBearerAuthorizationHeader(HttpClient client, string authToken)
         {
-            DefaultPostApiResponse defaultPostApiResponse = new DefaultPostApiResponse();
+            if (string.IsNullOrEmpty(authToken))
+                throw new ArgumentNullException(nameof(authToken), $"Unexpected null value at {nameof(AddBearerAuthorizationHeader)}.");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
-
-            if (dataToSend != null)
-            {
-                string json = JsonConvert.SerializeObject(dataToSend);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            }
-
-            using (var client = _clientFactory.CreateClient())
-            {
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
-
-                var httpResponseMessage = await client.SendAsync(request);
-
-                defaultPostApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
-                {
-                    defaultPostApiResponse.Success = true;
-
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
-
-                        defaultPostApiResponse.Message = okResponse.Message;
-                    }
-
-                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                    {
-                        defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        defaultPostApiResponse.Message = notFoundResponse.Message;
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
-                {
-                    defaultPostApiResponse.Success = true;
-
-                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                    {
-                        defaultPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                    defaultPostApiResponse.Message = badRequestResponse.Message;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
-                    //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
-                    //defaultPostApiResponse.Message = unauthorizedResponse.Message;
-
-                    throw new UnauthorizedException();
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    defaultPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else
-                {
-                    defaultPostApiResponse.Message = $"El servidor respondió con un código de estado {defaultPostApiResponse.StatusCode}.";
-                }
-
-                return defaultPostApiResponse;
-            }
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         }
 
-        public async Task<DataPostApiResponse<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null)
+        #region ManageApiResponseMessage
+        private async void ManageApiResponseMessage(DefaultApiResponseResult result, HttpResponseMessage httpResponseMessage)
         {
-            DataPostApiResponse<TData> dataPostApiResponse = new DataPostApiResponse<TData>();
+            result.StatusCode = (int)httpResponseMessage.StatusCode;
 
-            var request = new HttpRequestMessage(HttpMethod.Post, url);
-
-            if (dataToSend != null)
+            if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
             {
-                string json = JsonConvert.SerializeObject(dataToSend);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                result.Success = true;
+
+                if (httpResponseMessage.Content != null)
+                {
+                    string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
+
+                    result.Message = okResponse.Message;
+                }
             }
-
-            using (var client = _clientFactory.CreateClient())
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
             {
-                if (!string.IsNullOrEmpty(authToken))
+                result.Success = true;
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
+            {
+                result.Success = true;
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (httpResponseMessage.Content != null)
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+                    string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
+
+                    var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
+
+                    result.Message = notFoundResponse.Message;
                 }
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+            {
+                string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                var httpResponseMessage = await client.SendAsync(request);
+                var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
 
-                dataPostApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+                result.Message = badRequestResponse.Message;
 
-                if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
+                if (badRequestResponse.HasModelErrors)
                 {
-                    dataPostApiResponse.Success = true;
-
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
-
-                        if (okResponse.Data != null)
-                            dataPostApiResponse.Data = JsonConvert.DeserializeObject<TData>(okResponse.Data.ToString());
-
-                        dataPostApiResponse.Message = okResponse.Message;
-                    }
-
-                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                    {
-                        dataPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                    }
+                    result.ModelErrors = badRequestResponse.ModelErrors;
                 }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        dataPostApiResponse.Message = notFoundResponse.Message;
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
-                {
-                    dataPostApiResponse.Success = true;
-
-                    if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-                    {
-                        dataPostApiResponse.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                    dataPostApiResponse.Message = badRequestResponse.Message;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    //string jsonUnauthorized = await httpResponseMessage.Content.ReadAsStringAsync();
-                    //var unauthorizedResponse = JsonConvert.DeserializeObject<UnauthorizedResponse>(jsonUnauthorized);
-                    //dataPostApiResponse.Message = unauthorizedResponse.Message;
-
-                    throw new UnauthorizedException();
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    dataPostApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else
-                {
-                    dataPostApiResponse.Message = $"El servidor respondió con un código de estado {dataPostApiResponse.StatusCode}.";
-                }
-
-                return dataPostApiResponse;
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedException();
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                result.Message = "Ocurrió un error interno en el servidor.";
+            }
+            else
+            {
+                result.Message = $"El servidor respondió con un código de estado {result.StatusCode}.";
             }
         }
 
-        public async Task<DefaultPutApiResponse> Put(string url, object dataToSend = null, string authToken = null)
+        private async void ManageApiResponseMessage<TData>(DefaultApiResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
         {
-            DefaultPutApiResponse defaultPutApiResponse = new DefaultPutApiResponse();
+            result.StatusCode = (int)httpResponseMessage.StatusCode;
 
-            var request = new HttpRequestMessage(HttpMethod.Put, url);
-
-            if (dataToSend != null)
+            if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
             {
-                string json = JsonConvert.SerializeObject(dataToSend);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            }
+                result.Success = true;
 
-            using (var client = _clientFactory.CreateClient())
-            {
-                if (!string.IsNullOrEmpty(authToken))
+                if (httpResponseMessage.Content != null)
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
+                    string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                var httpResponseMessage = await client.SendAsync(request);
+                    var okResponse = JsonConvert.DeserializeObject<OkResponse>(jsonOkResponse);
 
-                defaultPutApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
+                    result.Message = okResponse.Message;
 
-                if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
-                {
-                    defaultPutApiResponse.Success = true;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
+                    if (okResponse.Data != null)
                     {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        defaultPutApiResponse.Message = notFoundResponse.Message;
+                        result.Data = JsonConvert.DeserializeObject<TData>(okResponse.Data.ToString());
                     }
                 }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
+            {
+                result.Success = true;
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
+            {
+                result.Success = true;
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (httpResponseMessage.Content != null)
                 {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
+                    string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+                    var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
 
-                    defaultPutApiResponse.Message = badRequestResponse.Message;
+                    result.Message = notFoundResponse.Message;
                 }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    defaultPutApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    throw new UnauthorizedException();
-                }
-                else
-                {
-                    defaultPutApiResponse.Message = $"El servidor respondió con un código de estado {defaultPutApiResponse.StatusCode}.";
-                }
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
+            {
+                string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
 
-                return defaultPutApiResponse;
+                var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
+
+                result.Message = badRequestResponse.Message;
+
+                if (badRequestResponse.HasModelErrors)
+                {
+                    result.ModelErrors = badRequestResponse.ModelErrors;
+                }
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new UnauthorizedException();
+            }
+            else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                result.Message = "Ocurrió un error interno en el servidor.";
+            }
+            else
+            {
+                result.Message = $"El servidor respondió con un código de estado {result.StatusCode}.";
             }
         }
+        #endregion
 
-        public async Task<DefaultPatchApiResponse> Patch(string url, object dataToSend = null, string authToken = null)
+        #region GetApiResponseHeaders
+        private void GetApiResponseHeaders(DefaultApiResponseResult result, HttpResponseMessage httpResponseMessage)
         {
-            DefaultPatchApiResponse defaultPatchApiResponse = new DefaultPatchApiResponse();
-
-            var request = new HttpRequestMessage(HttpMethod.Patch, url);
-
-            if (dataToSend != null)
+            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
             {
-                string json = JsonConvert.SerializeObject(dataToSend);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            }
-
-            using (var client = _clientFactory.CreateClient())
-            {
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
-
-                var httpResponseMessage = await client.SendAsync(request);
-
-                defaultPatchApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
-                {
-                    defaultPatchApiResponse.Success = true;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                    defaultPatchApiResponse.Message = badRequestResponse.Message;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        defaultPatchApiResponse.Message = notFoundResponse.Message;
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    defaultPatchApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    throw new UnauthorizedException();
-                }
-                else
-                {
-                    defaultPatchApiResponse.Message = $"El servidor respondió con un código de estado {defaultPatchApiResponse.StatusCode}.";
-                }
-
-                return defaultPatchApiResponse;
+                result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
             }
         }
 
-        public async Task<DefaultDeleteApiResponse> Delete(string url, object dataToSend = null, string authToken = null)
+        private void GetApiResponseHeaders<TData>(DefaultApiResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
         {
-            DefaultDeleteApiResponse defaultDeleteApiResponse = new DefaultDeleteApiResponse();
-
-            var request = new HttpRequestMessage(HttpMethod.Delete, url);
-
-            if (dataToSend != null)
+            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
             {
-                string json = JsonConvert.SerializeObject(dataToSend);
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-            }
-
-            using (var client = _clientFactory.CreateClient())
-            {
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
-
-                var httpResponseMessage = await client.SendAsync(request);
-
-                defaultDeleteApiResponse.StatusCode = (int)httpResponseMessage.StatusCode;
-
-                if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
-                {
-                    defaultDeleteApiResponse.Success = true;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-                {
-                    if (httpResponseMessage.Content != null)
-                    {
-                        string jsonNotFound = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                        var notFoundResponse = JsonConvert.DeserializeObject<NotFoundResponse>(jsonNotFound);
-
-                        defaultDeleteApiResponse.Message = notFoundResponse.Message;
-                    }
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    string jsonBadRequest = await httpResponseMessage.Content.ReadAsStringAsync();
-
-                    var badRequestResponse = JsonConvert.DeserializeObject<BadRequestResponse>(jsonBadRequest);
-
-                    defaultDeleteApiResponse.Message = badRequestResponse.Message;
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
-                {
-                    defaultDeleteApiResponse.Message = "Ocurrió un error interno en el servidor.";
-                }
-                else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    throw new UnauthorizedException();
-                }
-                else
-                {
-                    defaultDeleteApiResponse.Message = $"El servidor respondió con un código de estado {defaultDeleteApiResponse.StatusCode}.";
-                }
-
-                return defaultDeleteApiResponse;
+                result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
             }
         }
+        #endregion
+
+        #endregion
     }
 }
