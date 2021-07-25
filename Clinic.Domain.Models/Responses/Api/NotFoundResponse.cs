@@ -3,6 +3,6 @@
     public class NotFoundResponse
     {
         public string Message { get; set; }
-        public int? Id { get; set; }
+        public int? NotFoundResourceId { get; set; }
     }
 }

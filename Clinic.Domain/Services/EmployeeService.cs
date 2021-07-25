@@ -13,7 +13,7 @@ using Clinic.CrossCutting.CustomExceptions;
 
 namespace Clinic.Domain.Services
 {
-    public class EmployeeService : IEmployeeService
+    public class EmployeeService : ServiceMiddleware, IEmployeeService
     {
         private readonly IRepository _repository;
         private readonly IUriGenerator _uriGenerator;
@@ -32,13 +32,15 @@ namespace Clinic.Domain.Services
         {
             string url = _uriGenerator.CreatePagedListUri(_employeeRoutes.Employee, filters).ToString();
 
-            var apiResponse = await _repository.Get<IEnumerable<EmployeeListDTO>>(url, authToken: token);
+            var response = await _repository.Get<IEnumerable<EmployeeListDTO>>(url, authToken: token);
 
             var oViewModel = new EmployeeIndexViewModel
             {
-                Employees = apiResponse.Data,
-                Metadata = apiResponse.Metadata
+                Employees = response.Data,
+                Metadata = response.Metadata
             };
+
+            ValidateResponse(response);
 
             return oViewModel;
         }
@@ -54,19 +56,16 @@ namespace Clinic.Domain.Services
 
             url = _uriGenerator.AddQueryStringParams(url, queryParams).ToString();
 
-            var apiResponse = await _repository.Get<EmployeeUpdateDTO>(url, authToken: token);
-
-            if(apiResponse.StatusCode == StatusCodes.Status404NotFound)
-            {
-                throw new NotFoundException(apiResponse.Message, id);
-            }
+            var response = await _repository.Get<EmployeeUpdateDTO>(url, authToken: token);
 
             EmployeeEditViewModel oViewModel = new()
             {
-                Employee = apiResponse.Data,
-                Message = apiResponse.Message,
-                Success = apiResponse.Success
+                Employee = response.Data,
+                Message = response.Message,
+                Success = response.Success
             };
+
+            ValidateResponse(response);
 
             return oViewModel;
         }
@@ -82,19 +81,21 @@ namespace Clinic.Domain.Services
 
             url = _uriGenerator.AddQueryStringParams(url, queryParams).ToString();
 
-            var apiResponse = await _repository.Get<EmployeeDTO>(url, authToken: token);
+            var response = await _repository.Get<EmployeeDTO>(url, authToken: token);
 
-            if (apiResponse.StatusCode == StatusCodes.Status404NotFound)
+            if (response.StatusCode == StatusCodes.Status404NotFound)
             {
-                throw new NotFoundException(apiResponse.Message, id);
+                throw new NotFoundException(response.Message, id);
             }
 
             EmployeeDetailsViewModel oViewModel = new()
             {
-                Employee = apiResponse.Data,
-                Message = apiResponse.Message,
-                Success = apiResponse.Success
+                Employee = response.Data,
+                Message = response.Message,
+                Success = response.Success
             };
+
+            ValidateResponse(response);
 
             return oViewModel;
         }
@@ -103,27 +104,33 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_employeeRoutes.Employee}/{model.Id}";
 
-            var apiResponse = await _repository.Put(url, model, token);
+            var response = await _repository.Put(url, model, token);
 
-            return apiResponse;
+            ValidateResponse(response);
+
+            return response;
         }
 
         public async Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token)
         {
             string url = _employeeRoutes.Employee;
 
-            var apiResponse = await _repository.Post(url, model, token);
+            var response = await _repository.Post(url, model, token);
 
-            return apiResponse;
+            ValidateResponse(response);
+
+            return response;
         }
 
         public async Task<DefaultApiResponseResult> DeleteAsync(int id, string password, string token)
         {
             string url = $"{_employeeRoutes.Employee}/{id}";
 
-            var apiResponse = await _repository.Delete(url, new { password }, token);
+            var response = await _repository.Delete(url, new { password }, token);
 
-            return apiResponse;
+            ValidateResponse(response);
+
+            return response;
         }
 
         #region DESECHADO

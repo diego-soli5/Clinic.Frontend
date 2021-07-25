@@ -336,7 +336,7 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                throw new UnauthorizedException();
+                
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
             {
@@ -404,7 +404,7 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                throw new UnauthorizedException();
+                
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.InternalServerError)
             {

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Domain.Services
 {
-    public class MedicService : IMedicService
+    public class MedicService : ServiceMiddleware, IMedicService
     {
         private readonly IRepository _repository;
         private readonly MedicRoutes _medicRoutes;
@@ -43,6 +43,8 @@ namespace Clinic.Domain.Services
 
             var medicListReponse = await _repository.Get<IEnumerable<MedicListDTO>>(url, authToken: authToken);
 
+            ValidateResponse(medicListReponse);
+            
             var lstMedicSpecialties = await GetMedicalSpecialtiesSelectListItems(authToken);
 
             var viewModel = new MedicIndexViewModel
@@ -66,6 +68,8 @@ namespace Clinic.Domain.Services
 
             var response = await _repository.Get<IEnumerable<MedicDisplayPendingForUpdateDTO>>(url, authToken: authToken);
 
+            ValidateResponse(response);
+
             return response.Data;
         }
 
@@ -73,12 +77,9 @@ namespace Clinic.Domain.Services
         {
             string url = $"{_medicRoutes.Pending}{idEmployee}";
 
-            var medicResponse = await _repository.Get<MedicPedingUpdateDTO>(url, authToken: authToken);
+            var response = await _repository.Get<MedicPedingUpdateDTO>(url, authToken: authToken);
 
-            if (medicResponse.StatusCode == StatusCodes.Status404NotFound)
-            {
-                throw new NotFoundException(medicResponse.Message, idEmployee);
-            }
+            ValidateResponse(response);
 
             var lstMedicSpecialtiesSelectListItems = await GetMedicalSpecialtiesSelectListItems(authToken);
 
@@ -86,9 +87,9 @@ namespace Clinic.Domain.Services
 
             var viewModel = new MedicPendingUpdateViewModel
             {
-                Medic = medicResponse.Data,
-                Success = medicResponse.Success,
-                Message = medicResponse.Message,
+                Medic = response.Data,
+                Success = response.Success,
+                Message = response.Message,
                 MedicalSpecialties = lstMedicSpecialtiesSelectListItems,
                 ConsultingRooms = lstConsultingRoomsSelectListItems
             };
@@ -102,17 +103,21 @@ namespace Clinic.Domain.Services
 
             var response = await _repository.Patch(url, model, authToken);
 
+            ValidateResponse(response);
+
             return response;
         }
 
         #region UTILITY METHODS
         private async Task<IEnumerable<SelectListItem>> GetMedicalSpecialtiesSelectListItems(string authToken)
         {
-            var medicSpecialtiesResponse = await _repository.Get<IEnumerable<MedicalSpecialtyListDTO>>(_medicalSpecialtyRoutes.MedicalSpecialty, authToken: authToken);
+            var response = await _repository.Get<IEnumerable<MedicalSpecialtyListDTO>>(_medicalSpecialtyRoutes.MedicalSpecialty, authToken: authToken);
+
+            ValidateResponse(response);
 
             List<SelectListItem> lstMedicSpecialties = new List<SelectListItem>();
 
-            medicSpecialtiesResponse.Data.ToList().ForEach(esp =>
+            response.Data.ToList().ForEach(esp =>
             {
                 lstMedicSpecialties.Add(new SelectListItem(esp.Name, esp.Id.ToString()));
             });
@@ -122,11 +127,13 @@ namespace Clinic.Domain.Services
 
         private async Task<IEnumerable<SelectListItem>> GetConsultingRoomsSelectListItems(string authToken)
         {
-            var consultingRoomsResponse = await _repository.Get<IEnumerable<ConsultingRoomDTO>>(_consultingRoomRoutes.ConsultingRoom, authToken: authToken);
+            var response = await _repository.Get<IEnumerable<ConsultingRoomDTO>>(_consultingRoomRoutes.ConsultingRoom, authToken: authToken);
+
+            ValidateResponse(response);
 
             List<SelectListItem> lstConsultingRooms = new List<SelectListItem>();
 
-            consultingRoomsResponse.Data.ToList().ForEach(room =>
+            response.Data.ToList().ForEach(room =>
             {
                 lstConsultingRooms.Add(new SelectListItem(room.NameIdentifier, room.Id.ToString()));
             });

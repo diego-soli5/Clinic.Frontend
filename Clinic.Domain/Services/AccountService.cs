@@ -1,5 +1,4 @@
-﻿using Clinic.CrossCutting.CustomExceptions;
-using Clinic.CrossCutting.Routes;
+﻿using Clinic.CrossCutting.Routes;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Abstractions;
 using Clinic.Domain.Models.DTOs.Account;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Clinic.Domain.Services
 {
-    public class AccountService : IAccountService
+    public class AccountService : ServiceMiddleware, IAccountService
     {
         private readonly IRepository _repository;
         private readonly AccountRoutes _routes;
@@ -26,28 +25,33 @@ namespace Clinic.Domain.Services
         {
             string url = _routes.Authenticate;
 
-            return await _repository.Post<LoginResultDTO>(url, new { emailOrIdentification, password });
+            var response = await _repository.Post<LoginResultDTO>(url, new { emailOrIdentification, password });
+
+            ValidateResponse(response);
+
+            return response;
         }
 
         public async Task<PersonDTO> GetCurrentUser(int id, string authToken)
         {
             string url = $"{_routes.GetCurrentUser}{id}";
 
-            var apiResponse = await _repository.Get<PersonDTO>(url, authToken: authToken);
+            var response = await _repository.Get<PersonDTO>(url, authToken: authToken);
 
-            if (apiResponse.StatusCode == StatusCodes.Status404NotFound)
-            {
-                throw new NotFoundException(apiResponse.Message, id);
-            }
+            ValidateResponse(response);
 
-            return apiResponse.Data;
+            return response.Data;
         }
 
         public async Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id, string authToken)
         {
             string url = $"{_routes.ChangeImage}{id}";
 
-            return await _repository.Post(url, new[] { image }, authToken);
+            var response = await _repository.Post(url, new[] { image }, authToken);
+
+            ValidateResponse(response);
+
+            return response;
         }
     }
 }

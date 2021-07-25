@@ -12,6 +12,6 @@ namespace Clinic.Domain.Abstractions
         Task<MedicIndexViewModel> GetAllAsync(MedicQueryFilter filters, string authToken);
         Task<IEnumerable<MedicDisplayPendingForUpdateDTO>> GetAllMedicsPendingForUpdate(string authToken);
         Task<MedicPendingUpdateViewModel> GetMedicPendingForUpdate(int idEmployee, string authToken);
-        Task<DefaultPatchApiResponse> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
+        Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
     }
 }

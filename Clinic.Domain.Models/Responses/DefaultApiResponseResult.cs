@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace Clinic.Domain.Models.Responses
 {
@@ -8,9 +9,13 @@ namespace Clinic.Domain.Models.Responses
         public string Message { get; set; }
         public bool Success { get; set; }
         public int? NewResourceId { get; set; }
+        public int? NotFoundResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;
         public Metadata Metadata { get; set; }
+        public bool ShouldFireNotFoundException => NotFoundResourceId.HasValue;
+        public bool IsUnauthorizedResponse => StatusCode == StatusCodes.Status401Unauthorized;
+
 
         public DefaultApiResponseResult()
         {
@@ -24,9 +29,12 @@ namespace Clinic.Domain.Models.Responses
         public string Message { get; set; }
         public bool Success { get; set; }
         public int? NewResourceId { get; set; }
+        public int? NotFoundResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;
         public Metadata Metadata { get; set; }
+        public bool ShouldFireNotFoundException => NotFoundResourceId.HasValue;
+        public bool IsUnauthorizedResponse => StatusCode == StatusCodes.Status401Unauthorized;
         public TData Data { get; set; }
 
         public DefaultApiResponseResult()
