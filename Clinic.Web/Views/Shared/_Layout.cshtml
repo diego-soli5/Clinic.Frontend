@@ -19,22 +19,18 @@
     @using System.Security.Claims
     @using Clinic.Domain.Models.Enumerations
     @{
-        string fullName = "";
-        string imgRoute = "/img/genericProfileImage.png";
+        string fullName = User.FindFirst(ClaimTypes.Name).Value;
+        string claimImg = User.FindFirstValue("ImageName");
 
-        if (User.Identity.IsAuthenticated)
-        {
-            fullName = User.FindFirst(ClaimTypes.Name).Value;
-
-            if (User.FindFirstValue("ImageName")?.Length > 0)
-            {
-                imgRoute = @Url.Action("GetProfileImage", "Resource", new { id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) });
+        <script>
+            let claimImg = "@claimImg";
+            if (sessionStorage["profileImgName"] == null || sessionStorage["profileImgName"] == undefined || sessionStorage["profileImgName"] == "") {
+                sessionStorage.setItem("profileImgName", claimImg);
             }
-        }
+        </script>
     }
 
     <div class="wrapper">
-
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-light navbar-light">
             <!-- Left navbar links -->
@@ -69,7 +65,12 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="@imgRoute" class="img-circle elevation-2" alt="User Image" id="userImage">
+                        <img class="img-circle elevation-2" alt="User Image" id="profileUserImg">
+                        <script>
+                            let n = sessionStorage["profileImgName"];
+                            document.querySelector("#profileUserImg")
+                                .src = `/api/Resource?n=${n}`;
+                        </script>
                     </div>
                     <div class="info">
                         <a asp-area="" asp-controller="Account" asp-action="Profile" class="d-block">@fullName</a>

@@ -1,7 +1,6 @@
 ﻿using Clinic.Domain.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -20,9 +19,10 @@ namespace Clinic.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProfileImage(int id)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImg(string n)
         {
-            var imageResult = await _resourceService.GetProfileImage(id, GetCurrentToken());
+            var imageResult = await _resourceService.GetProfileImage(n, GetCurrentToken());
 
             if (imageResult.Item1 == null)
                 return NotFound();

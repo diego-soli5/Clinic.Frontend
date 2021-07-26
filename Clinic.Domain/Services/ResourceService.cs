@@ -21,9 +21,9 @@ namespace Clinic.Domain.Services
             _uriGenerator = uriGenerator;
         }
 
-        public async Task<(byte[], string)> GetProfileImage(int id, string authToken)
+        public async Task<(byte[], string)> GetProfileImage(string n, string authToken)
         {
-            string url = _uriGenerator.AddQueryStringParams(_routes.ResourceRoutes.Resource, new { id }).ToString();
+            string url = _uriGenerator.AddQueryStringParams(_routes.ResourceRoutes.Resource, new { n, type = "img" }).ToString();
 
             var image = await _repository.Get(url, authToken);
 

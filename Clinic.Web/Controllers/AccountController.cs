@@ -54,7 +54,7 @@ namespace Clinic.Web.Controllers
                     new Claim(ClaimTypes.Name, result.Data.FullName),
                     new Claim(ClaimTypes.Email,result.Data.Email),
                     new Claim(ClaimTypes.MobilePhone, result.Data.PhoneNumber.ToString()),
-                    new Claim("ImageName", result.Data.ImageName ?? ""),
+                    new Claim("ImageName", result.Data.ImageName),
                     new Claim(ClaimTypes.Role, result.Data.AppUserRole.ToString()),
                     new Claim(ClaimTypes.Role, result.Data.EmployeeRole.ToString()),
                     new Claim("Token", result.Data.Token)
