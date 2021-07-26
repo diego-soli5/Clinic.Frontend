@@ -1,42 +1,65 @@
-﻿const imageInput = document.querySelector("#image");
-const imagePreview = document.querySelector("#previewImage");
-const frmImage = document.querySelector("#frmImage");
-const userIconImages = document.querySelectorAll("#userImage");
-const btn = document.querySelector("#btnImg");
+﻿class AccountManager {
+    newImageInput = null;
+    newImagePreview = null;
+    frmChangeImage = null;
+    userIconImages = null;
+    btnChangeImage = null;
 
-imageInput.addEventListener("change", () => {
-    const filesOfImageInput = imageInput.files;
-
-    if (!filesOfImageInput || !filesOfImageInput.length) {
-        imagePreview.src = "";
-        return;
+    constructor() {
+        this.newImageInput = document.querySelector("#newImage");
+        this.newImagePreview = document.querySelector("#newImagePreview");
+        this.frmChangeImage = document.querySelector("#frmChangeImage");
+        this.userIconImages = document.querySelectorAll("#profileUserImg");
+        this.btnChangeImage = document.querySelector("#btnChangeImage");
     }
 
-    const firstFileOfImageInput = filesOfImageInput[0];
-    const objectURL = URL.createObjectURL(firstFileOfImageInput);
+    addEvts() {
+        this.newImageInput.addEventListener("change", () => { this.previewNewImage(); });
+        this.frmChangeImage.addEventListener("submit", (e) => { this.changeImage(e); });
+    }
 
-    imagePreview.src = objectURL;
-});
+    previewNewImage() {
+        const filesOfImageInput = this.newImageInput.files;
 
-frmImage.addEventListener("submit", function (e) {
-    e.preventDefault();
+        if (!filesOfImageInput || !filesOfImageInput.length) {
+            newImagePreview.src = "";
+            return;
+        }
 
-    const url = "/api/Account/Profile/ChangeImage";
+        const firstFileOfImageInput = filesOfImageInput[0];
+        const objectURL = URL.createObjectURL(firstFileOfImageInput);
 
-    const body = new FormData(frmImage);
+        this.newImagePreview.src = objectURL;
+    }
 
-    fetch(url, { body: body, method: 'POST' })
-        .then(response => response.json())
-        .then(json => {
-            if (json.success) {
-                $("#modalImg").modal("hide");
-                btn.innerText = "Cambiar Imagen";
-                userIconImages.forEach(img => img.src = URL.createObjectURL(imageInput.files[0]));
-                imagePreview.src = "";
-                imageInput.value = null;
+    changeImage(e) {
+        e.preventDefault();
 
-            } else {
-                swalAlert('', json.message, false);
-            }
-        });
-});
+        const url = "/api/Account/Profile/ChangeImage";
+
+        const body = new FormData(frmChangeImage);
+
+        fetch(url, { body: body, method: 'POST' })
+            .then(response => response.json())
+            .then(json => this.manageResponse(json));
+    }
+
+    manageResponse(json) {
+        if (json.success) {
+            $("#modalNewImage").modal("hide");
+
+            this.userIconImages.forEach(img => img.src = URL.createObjectURL(this.newImageInput.files[0]));
+            this.newImagePreview.src = "";
+            this.newImageInput.value = null;
+
+            let newImgName = json.newResourceName;
+            sessionStorage.setItem("profileImgName", newImgName);
+        } else {
+            swalAlert('', json.message, false);
+        }
+    }
+}
+
+
+let accountManager = new AccountManager();
+accountManager.addEvts();

@@ -427,6 +427,11 @@ namespace Clinic.Data.Repositories
                 result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
             }
 
+            if (httpResponseMessage.Headers.Contains("X-Resource-Name"))
+            {
+                result.NewResourceName = httpResponseMessage.Headers.GetValues("X-Resource-Name").FirstOrDefault();
+            }
+
             if (httpResponseMessage.Headers.Contains("X-Pagination"))
             {
                 string jsonHeader = httpResponseMessage.Headers.GetValues("X-Pagination").FirstOrDefault();
@@ -440,6 +445,11 @@ namespace Clinic.Data.Repositories
             if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
             {
                 result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
+            }
+
+            if (httpResponseMessage.Headers.Contains("X-Resource-Name"))
+            {
+                result.NewResourceName = httpResponseMessage.Headers.GetValues("X-Resource-Name").FirstOrDefault();
             }
 
             if (httpResponseMessage.Headers.Contains("X-Pagination"))

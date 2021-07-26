@@ -9,6 +9,7 @@ namespace Clinic.Domain.Models.Responses
         public string Message { get; set; }
         public bool Success { get; set; }
         public int? NewResourceId { get; set; }
+        public string NewResourceName { get; set; }
         public int? NotFoundResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;
@@ -29,6 +30,7 @@ namespace Clinic.Domain.Models.Responses
         public string Message { get; set; }
         public bool Success { get; set; }
         public int? NewResourceId { get; set; }
+        public string NewResourceName { get; set; }
         public int? NotFoundResourceId { get; set; }
         public List<string> ModelErrors { get; set; }
         public bool HasModelErrors => ModelErrors?.Count > 0;

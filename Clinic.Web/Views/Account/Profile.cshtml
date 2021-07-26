@@ -2,14 +2,9 @@
 @{
     ViewData["Title"] = "Mi Perfil";
 
-    string imgRoute = "/img/noimage.png";
-    string buttonAndModalText = "Agregar Imagen";
+    string imgRoute = @Url.Action("GetImg", "Resource", new { n = Model.ImageName }); ;
+    string buttonAndModalText = "Cambiar Imagen";
 
-    if (Model.ImageName?.Length > 0)
-    {
-        imgRoute = @Url.Action("GetProfileImage", "Resource", new { id = Model.Id });
-        buttonAndModalText = "Cambiar Imagen";
-    }
 }
 
 <div class="card card-blue">
@@ -20,9 +15,9 @@
         <div class="row">
             <div class="col-sm-5 order-sm-2 mb-3">
                 <div class="text-center">
-                    <img src="@imgRoute" alt="User Image" class="img-fluid img-thumbnail" id="userImage" />
+                    <img src="@imgRoute" alt="User Image" class="img-fluid img-thumbnail" id="profileUserImg" />
                     <div>
-                        <button type="button" class="btn btn-success btn-sm mt-3" data-toggle="modal" data-target="#modalImg" id="btnImg">@buttonAndModalText</button>
+                        <button type="button" class="btn btn-success btn-sm mt-3" data-toggle="modal" data-target="#modalNewImage" id="btnChangeImage">@buttonAndModalText</button>
                     </div>
                 </div>
 
@@ -60,7 +55,7 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="modalImg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalNewImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -70,18 +65,18 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" enctype="multipart/form-data" id="frmImage">
+                <form method="post" enctype="multipart/form-data" id="frmChangeImage">
                     <div class="form-group">
-                        <input type="file" class="form-control-file" name="image" id="image" />
+                        <input type="file" class="form-control-file" name="image" id="newImage" />
                     </div>
                     <div class="form-group">
-                        <img id="previewImage" class="img-fluid img-thumbnail" />
+                        <img id="newImagePreview" class="img-fluid img-thumbnail" />
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary" form="frmImage">Guardar</button>
+                <button type="submit" class="btn btn-primary" form="frmChangeImage">Guardar</button>
             </div>
         </div>
     </div>

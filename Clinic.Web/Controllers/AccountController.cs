@@ -118,12 +118,7 @@ namespace Clinic.Web.Controllers
 
             var response = await _service.ChangeImage(image, CurrentUserId, CurrentToken);
 
-            if (response.Success)
-            {
-                return Ok(new { response.Success, response.Message });
-            }
-
-            return StatusCode(response.StatusCode, new { response.Success, response.Message });
+            return StatusCode(response.StatusCode, response);
         }
         #endregion
 
