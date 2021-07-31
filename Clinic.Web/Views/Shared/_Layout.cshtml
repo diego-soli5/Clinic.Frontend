@@ -20,14 +20,7 @@
     @using Clinic.Domain.Models.Enumerations
     @{
         string fullName = User.FindFirst(ClaimTypes.Name).Value;
-        string claimImg = User.FindFirstValue("ImageName");
-
-        <script>
-            let claimImg = "@claimImg";
-            if (sessionStorage["profileImgName"] == null || sessionStorage["profileImgName"] == undefined || sessionStorage["profileImgName"] == "") {
-                sessionStorage.setItem("profileImgName", claimImg);
-            }
-        </script>
+        int id = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
 
     <div class="wrapper">
@@ -65,12 +58,7 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img class="img-circle elevation-2" alt="User Image" id="profileUserImg">
-                        <script>
-                            let n = sessionStorage["profileImgName"];
-                            document.querySelector("#profileUserImg")
-                                .src = `/api/Resource?n=${n}`;
-                        </script>
+                        <img src="@Url.Action("GetImg","Resource",new { id = id })" class="img-circle elevation-2" alt="User Image" id="profileUserImg">
                     </div>
                     <div class="info">
                         <a asp-area="" asp-controller="Account" asp-action="Profile" class="d-block">@fullName</a>
@@ -102,13 +90,28 @@
                                 </li>
                             }
 
-                            <li class="nav-item">
-                                <a asp-area="Client" asp-controller="Medic" asp-action="Index" class="nav-link">
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-user-md"></i>
                                     <p>
                                         Médicos
+                                        <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a asp-area="Client" asp-controller="Medic" asp-action="Index" class="nav-link">
+                                            <i class="fas fa-book-medical nav-icon"></i>
+                                            <p>Gestionar</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-area="Client" asp-controller="Medic" asp-action="AttentionSchedules" class="nav-link">
+                                            <i class="far fa-calendar-alt nav-icon"></i>
+                                            <p>Horarios de Atención</p>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                     </ul>

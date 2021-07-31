@@ -122,6 +122,12 @@ namespace Clinic.Web.Areas.Client.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public IActionResult AttentionSchedules()
+        {
+            return View();
+        }
+
         #region UTILITY METHODS
         private async Task<IEnumerable<SelectListItem>> GetMedicalSpecialtiesSLI()
         {

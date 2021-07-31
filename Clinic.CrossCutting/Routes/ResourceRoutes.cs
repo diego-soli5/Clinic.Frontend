@@ -1,10 +1,5 @@
 ﻿using Clinic.CrossCutting.Options;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clinic.CrossCutting.Routes
 {
@@ -20,6 +15,7 @@ namespace Clinic.CrossCutting.Routes
         }
 
         public string Resource { get; private set; }
+        public string GetEntityImgById { get { return $"{Resource}/"; } }
 
     }
 }

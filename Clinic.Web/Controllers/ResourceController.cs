@@ -20,9 +20,14 @@ namespace Clinic.Web.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetImg(string n)
+        public async Task<IActionResult> GetImg(string n, int? id)
         {
-            var imageResult = await _resourceService.GetProfileImage(n, GetCurrentToken());
+            (byte[], string) imageResult = (null, null);
+           
+            if(id.HasValue)
+                imageResult = await _resourceService.GetProfileImage(id.Value, GetCurrentToken());
+            else
+                imageResult = await _resourceService.GetProfileImage(n, GetCurrentToken());
 
             if (imageResult.Item1 == null)
                 return NotFound();

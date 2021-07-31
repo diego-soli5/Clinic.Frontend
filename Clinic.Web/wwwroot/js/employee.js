@@ -1,15 +1,12 @@
-﻿var currentPage = 1;
-var ide = "";
+﻿var ide = "";
 var sta = "";
 
 $(function () {
 
     //INICIA MISC
-    function bindEvts(pgnum) {
+    function bindEvts() {
         bindPaginationEvts();
         bindCRUDevts();
-
-        currentPage = pgnum;
     }
     //FIN MISC
 
@@ -21,7 +18,7 @@ $(function () {
         sta = $("#EmployeeStatus").val();
 
         $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${sta}`, function () {
-            bindEvts(1);
+            bindEvts();
         });
 
     });
@@ -58,7 +55,7 @@ $(function () {
     function getPaginatedPage(pgnum) {
 
         $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${ide}&employeeStatus=${sta}`, function () {
-            bindEvts(pgnum);
+            bindEvts();
         });
     }
 
@@ -76,80 +73,6 @@ $(function () {
             });
         });
 
-        //Codigo comentado por posibilidad de reintegrar la funcionalidad
-        /*
-        document.querySelectorAll("#btnFire").forEach(x => {
-            x.addEventListener("click", function (e) {
-                e.stopPropagation();
-
-                let id = e.target.getAttribute("data-id");
-
-                Swal.fire({
-                    title: 'Despedir Empleado',
-                    text: "Estás seguro de realizar la acción?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, estoy seguro.',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        fetch(`/api/admin/employee/fire/${id}`, { method: 'POST' })
-                            .then(res => res.json())
-                            .then(data => {
-                               
-                                swalAlert('Despedir', data.message, data.success);
-
-                                if (data.success) {
-                                    getPaginatedPage(currentPage);
-                                }
-
-                            }).catch(err => {
-                                swalAlert("Hubo un error desconocido, asegurate de tener conexión a internet.", false);
-                            });
-                    }
-                })
-            });
-        });
-
-        document.querySelectorAll("#btnActivate").forEach(x => {
-            x.addEventListener("click", function (e) {
-                e.stopPropagation();
-                
-                let id = e.target.getAttribute("data-id");
-
-                Swal.fire({
-                    title: 'Activar empleado?',
-                    text: "Estás seguro de realizar la acción?",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si, estoy seguro.',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-
-                        fetch(`/api/admin/employee/activate/${id}`, { method: 'POST' })
-                            .then(res => res.json())
-                            .then(data => {
-
-                                swalAlert('Activar', data.message, data.success);
-
-                                if (data.success) {
-                                    getPaginatedPage(currentPage);
-                                }
-               
-                            }).catch(err => {
-                                swalAlert("Hubo un error desconocido, asegurate de tener conexión a internet.", false);
-                            });
-                    }
-                })
-            });
-        });
-        */
     }
 
     bindCRUDevts();

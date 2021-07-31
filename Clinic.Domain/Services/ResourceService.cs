@@ -29,5 +29,14 @@ namespace Clinic.Domain.Services
 
             return image;
         }
+
+        public async Task<(byte[], string)> GetProfileImage(int id, string authToken)
+        {
+            string url = $"{_routes.ResourceRoutes.GetEntityImgById}{id}";
+
+            var image = await _repository.Get(url, authToken);
+
+            return image;
+        }
     }
 }

@@ -3,17 +3,17 @@
     newImagePreview = null;
     frmChangeImage = null;
     userIconImages = null;
-    btnChangeImage = null;
+    btnSave = null;
 
     constructor() {
         this.newImageInput = document.querySelector("#newImage");
         this.newImagePreview = document.querySelector("#newImagePreview");
         this.frmChangeImage = document.querySelector("#frmChangeImage");
         this.userIconImages = document.querySelectorAll("#profileUserImg");
-        this.btnChangeImage = document.querySelector("#btnChangeImage");
+        this.btnSave = document.querySelector("#btnSave");
     }
 
-    addEvts() {
+    bindEvts() {
         this.newImageInput.addEventListener("change", () => { this.previewNewImage(); });
         this.frmChangeImage.addEventListener("submit", (e) => { this.changeImage(e); });
     }
@@ -39,6 +39,9 @@
 
         const body = new FormData(frmChangeImage);
 
+        this.btnSave.innerText = "Guardando..";
+        this.btnSave.disabled = true;
+
         fetch(url, { body: body, method: 'POST' })
             .then(response => response.json())
             .then(json => this.manageResponse(json));
@@ -57,9 +60,13 @@
         } else {
             swalAlert('', json.message, false);
         }
+
+        this.btnSave.innerText = "Guardar";
+        this.btnSave.disabled = false;
+
     }
 }
 
 
 let accountManager = new AccountManager();
-accountManager.addEvts();
+accountManager.bindEvts();
