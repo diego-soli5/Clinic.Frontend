@@ -1,69 +1,38 @@
-﻿var ide = "";
-var sta = "";
+﻿class EmployeeManager {
+    ide = "";
+    sta = "";
 
-$(function () {
-
-    //INICIA MISC
-    function bindEvts() {
-        bindPaginationEvts();
-        bindCRUDevts();
+    constructor() {
+        this.bindSearchEvts();
+        this.bindEvts();
     }
-    //FIN MISC
 
-    //INICIA PAGINACION
-    $("#frmSearch").submit(function (e) {
-        e.preventDefault();
-
-        ide = $("#identification").val();
-        sta = $("#EmployeeStatus").val();
-
-        $("#tblEmployees").load(`/admin/employee/GetTable?identification=${ide}&employeeStatus=${sta}`, function () {
-            bindEvts();
+    getPaginatedPage(pgnum) {
+        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${this.ide}&employeeStatus=${this.sta}`, () => {
+            this.bindEvts();
         });
+    }
 
-    });
+    bindSearchEvts() {
+        document.querySelector("#frmSearch").addEventListener('submit', ((e) => {
+            e.preventDefault();
 
-    function bindPaginationEvts() {
+            this.ide = $("#identification").val();
+            this.sta = $("#EmployeeStatus").val();
 
-        document.querySelectorAll('#btnPage').forEach(x => {
-            x.addEventListener('click', function (e) {
-                e.preventDefault();
-
-                let pgnum = e.target.getAttribute('data-page');
-
-                getPaginatedPage(pgnum);
+            $("#tblEmployees").load(`/admin/employee/GetTable?identification=${this.ide}&employeeStatus=${this.sta}`, () => {
+                this.bindEvts();
             });
-        });
 
-        document.getElementById("btnNextPage").addEventListener("click", function (e) {
-            e.preventDefault();
-
-            let pgnum = e.target.getAttribute('data-page');
-
-            getPaginatedPage(pgnum);
-        });
-
-        document.getElementById("btnPrevPage").addEventListener("click", function (e) {
-            e.preventDefault();
-
-            let pgnum = e.target.getAttribute('data-page');
-
-            getPaginatedPage(pgnum);
-        });
+        }));
     }
 
-    function getPaginatedPage(pgnum) {
-
-        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${ide}&employeeStatus=${sta}`, function () {
-            bindEvts();
-        });
+    bindEvts() {
+        this.bindCRUDevts();
+        this.bindPaginationEvts();
     }
 
-    bindPaginationEvts();
-    //FIN PAGINACION
-
-    //INICIA BOTONES CRUD & FIRE & ACTIVATE
-    function bindCRUDevts() {
+    bindCRUDevts() {
 
         document.querySelectorAll('tbody tr.pointer').forEach(x => {
             x.addEventListener('click', function (e) {
@@ -75,8 +44,40 @@ $(function () {
 
     }
 
-    bindCRUDevts();
-    //FIN BOTONES FIRE & ACTIVATE
-});
+    bindPaginationEvts() {
+
+        document.querySelectorAll('#btnPage').forEach(x => {
+            x.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                let pgnum = e.target.getAttribute('data-page');
+
+                this.getPaginatedPage(pgnum);
+            });
+        });
+
+        document.getElementById("btnNextPage").addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let pgnum = e.target.getAttribute('data-page');
+
+            this.getPaginatedPage(pgnum);
+        });
+
+        document.getElementById("btnPrevPage").addEventListener("click", (e) => {
+            e.preventDefault();
+
+            let pgnum = e.target.getAttribute('data-page');
+
+            this.getPaginatedPage(pgnum);
+        });
+    }
+}
+
+var employeeManager = new EmployeeManager();
+
+
+
+
 
 
