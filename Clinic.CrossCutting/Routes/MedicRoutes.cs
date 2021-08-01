@@ -16,6 +16,14 @@ namespace Clinic.CrossCutting.Routes
 
         public string Medic { get; private set; }
 
+        public string Edit
+        {
+            get
+            {
+                return $"{Medic}/{nameof(Edit)}/";
+            }
+        }
+
         public string Pending
         {
             get

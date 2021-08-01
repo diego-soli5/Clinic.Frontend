@@ -1,0 +1,66 @@
+﻿@model Clinic.Domain.Models.ViewModels.Client.Medic.MedicEditViewModel
+@{
+    ViewData["Title"] = "Médicos";
+
+
+}
+
+<div class="card card-blue">
+    <div class="card-header">
+        <h4>Editar</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <form asp-area="Client" asp-controller="Medic" asp-action="Edit" method="post" id="frm">
+                    @Html.HiddenFor(x => x.Medic.Id)
+                    @Html.HiddenFor(x => x.Medic.Names)
+                    @Html.HiddenFor(x => x.Medic.Surnames)
+                    @Html.HiddenFor(x => x.Medic.Identification)
+
+                    <div class="form-group">
+                        <label asp-for="Medic.FullName"></label>
+                        <input asp-for="Medic.FullName" disabled class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Medic.Identification"></label>
+                        <input asp-for="Medic.Identification" disabled class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Medic.IdMedicalSpecialty"></label>
+                        @Html.DropDownListFor(x => x.Medic.IdMedicalSpecialty, Model.MedicalSpecialtiesSelectListItems, "Seleccionar", new { @class = "form-control" })
+                        <span asp-validation-for="Medic.IdMedicalSpecialty" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Medic.IdConsultingRoom"></label>
+                        @Html.DropDownListFor(x => x.Medic.IdConsultingRoom, Model.ConsultingRoomSelectListItems, "Seleccionar", new { @class = "form-control" })
+                        <span asp-validation-for="Medic.IdConsultingRoom" class="text-danger"></span>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 mb-3">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="submit" form="frm" value="Guardar Cambios" class="btn btn-success btn-block" />
+                    </div>
+                    <div class="col-6">
+                        <a asp-area="Client" asp-controller="Medic" asp-action="Index" class="btn btn-outline-info btn-block">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    @if (ViewData["ErrorMessage"] != null)
+    {
+        <script>
+            $(function () {
+                swalAlert('Hubo un problema..','@ViewData["ErrorMessage"]', false);
+            });
+        </script>
+    }
+}

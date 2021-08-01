@@ -52,6 +52,64 @@ namespace Clinic.Web.Areas.Client.Controllers
 
             return PartialView("_MedicPagedTablePartial", oViewModel);
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var oViewModel = new MedicEditViewModel();
+
+            var medicResponse = await _medicService.GetMedicForEdit(id, CurrentToken);
+
+            if (!medicResponse.Success)
+            {
+                TempData["ErrorMedicMessage"] = medicResponse.Message;
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            oViewModel.ConsultingRoomSelectListItems = await GetConsultingRoomsSLI();
+            oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+            oViewModel.Medic = medicResponse.Data;
+
+            return View(oViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(MedicUpdateDTO model)
+        {
+            MedicEditViewModel oViewModel;
+
+            if (!ModelState.IsValid)
+            {
+                oViewModel = new MedicEditViewModel();
+
+                oViewModel.ConsultingRoomSelectListItems = await GetConsultingRoomsSLI();
+                oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+                oViewModel.Medic = model;
+
+                return View(oViewModel);
+            }
+
+            var response = await _medicService.EditMedic(model, CurrentToken);
+
+            if (!response.Success)
+            {
+                ViewData["ErrorMessage"] = response.Message;
+
+                oViewModel = new MedicEditViewModel();
+
+                oViewModel.ConsultingRoomSelectListItems = await GetConsultingRoomsSLI();
+                oViewModel.MedicalSpecialtiesSelectListItems = await GetMedicalSpecialtiesSLI();
+                oViewModel.Medic = model;
+
+                return View(oViewModel);
+            }
+
+            TempData["MedicMessage"] = $"Se actualizó correctamente la informacion del médico {model.Names}.";
+
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetPendingForUpdate()

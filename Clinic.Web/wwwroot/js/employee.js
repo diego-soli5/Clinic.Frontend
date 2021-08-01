@@ -1,6 +1,5 @@
 ﻿class EmployeeManager {
-    ide = "";
-    sta = "";
+    identification = "";
 
     constructor() {
         this.bindSearchEvts();
@@ -8,7 +7,7 @@
     }
 
     getPaginatedPage(pgnum) {
-        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${this.ide}&employeeStatus=${this.sta}`, () => {
+        $("#tblEmployees").load(`/admin/employee/GetTable?pageNumber=${pgnum}&isPagination=true&identification=${this.identification}`, () => {
             this.bindEvts();
         });
     }
@@ -17,10 +16,9 @@
         document.querySelector("#frmSearch").addEventListener('submit', ((e) => {
             e.preventDefault();
 
-            this.ide = $("#identification").val();
-            this.sta = $("#EmployeeStatus").val();
+            this.identification = $("#identification").val();
 
-            $("#tblEmployees").load(`/admin/employee/GetTable?identification=${this.ide}&employeeStatus=${this.sta}`, () => {
+            $("#tblEmployees").load(`/admin/employee/GetTable?identification=${this.identification}`, () => {
                 this.bindEvts();
             });
 

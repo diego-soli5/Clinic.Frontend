@@ -64,6 +64,35 @@ namespace Clinic.Domain.Services
             return response;
         }
 
+        public async Task<DefaultApiResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken)
+        {
+            string url = $"{_routes.MedicRoutes.Medic}/{id}";
+
+            var response = await _repository.Get<MedicUpdateDTO>(url, authToken: authToken);
+
+            ValidateResponse(response);
+
+            return response;
+        }
+
+        public async Task<DefaultApiResponseResult> EditMedic(MedicUpdateDTO model, string authToken)
+        {
+            string url = $"{_routes.MedicRoutes.Edit}{model.Id}";
+
+            var data = new
+            {
+                model.Id,
+                model.IdConsultingRoom,
+                model.IdMedicalSpecialty
+            };
+
+            var response = await _repository.Patch(url, data, authToken);
+
+            ValidateResponse(response);
+
+            return response;
+        }
+
         public async Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
         {
             string url = $"{_routes.MedicRoutes.Medic}/{model.IdEmployee}";

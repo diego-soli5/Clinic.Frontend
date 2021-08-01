@@ -15,5 +15,7 @@ namespace Clinic.Domain.Abstractions
         Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
         Task<DefaultApiResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken);
         Task<DefaultApiResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken);
+        Task<DefaultApiResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken);
+        Task<DefaultApiResponseResult> EditMedic(MedicUpdateDTO model, string authToken);
     }
 }
