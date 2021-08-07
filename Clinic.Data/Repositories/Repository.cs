@@ -1,6 +1,7 @@
 ﻿using Clinic.CrossCutting.CustomExceptions;
 using Clinic.Data.Abstractions;
 using Clinic.Domain.Models.Responses;
+using Clinic.Domain.Models.Responses.Abstractions;
 using Clinic.Domain.Models.Responses.Api;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -28,9 +29,9 @@ namespace Clinic.Data.Repositories
         #endregion
 
         #region GET
-        public async Task<DefaultApiResponseResult<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult<TData> result = new();
+            DefaultResponseResult<TData> result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Get, url))
             {
@@ -44,8 +45,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -88,9 +89,9 @@ namespace Clinic.Data.Repositories
         #endregion
 
         #region POST
-        public async Task<DefaultApiResponseResult> Post(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult> Post(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult result = new();
+            DefaultResponseResult result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
@@ -104,8 +105,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -113,9 +114,9 @@ namespace Clinic.Data.Repositories
             }
         }
 
-        public async Task<DefaultApiResponseResult<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult<TData> result = new();
+            DefaultResponseResult<TData> result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
@@ -129,8 +130,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -138,9 +139,9 @@ namespace Clinic.Data.Repositories
             }
         }
 
-        public async Task<DefaultApiResponseResult> Post(string url, IFormFile[] filesToSend, string authToken = null)
+        public async Task<DefaultResponseResult> Post(string url, IFormFile[] filesToSend, string authToken = null)
         {
-            DefaultApiResponseResult result = new();
+            DefaultResponseResult result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
             {
@@ -154,8 +155,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -165,9 +166,9 @@ namespace Clinic.Data.Repositories
         #endregion
 
         #region PUT
-        public async Task<DefaultApiResponseResult> Put(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult> Put(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult result = new();
+            DefaultResponseResult result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Put, url))
             {
@@ -181,8 +182,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -192,9 +193,9 @@ namespace Clinic.Data.Repositories
         #endregion
 
         #region PATCH
-        public async Task<DefaultApiResponseResult> Patch(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult> Patch(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult result = new();
+            DefaultResponseResult result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Patch, url))
             {
@@ -208,8 +209,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -219,9 +220,9 @@ namespace Clinic.Data.Repositories
         #endregion
 
         #region DELETE
-        public async Task<DefaultApiResponseResult> Delete(string url, object dataToSend = null, string authToken = null)
+        public async Task<DefaultResponseResult> Delete(string url, object dataToSend = null, string authToken = null)
         {
-            DefaultApiResponseResult result = new();
+            DefaultResponseResult result = new();
 
             using (var request = new HttpRequestMessage(HttpMethod.Delete, url))
             {
@@ -235,8 +236,8 @@ namespace Clinic.Data.Repositories
 
                     using (var httpResponseMessage = await client.SendAsync(request))
                     {
-                        ManageApiResponseMessage(result, httpResponseMessage);
-                        GetApiResponseHeaders(result, httpResponseMessage);
+                        ManageResponseMessage(result, httpResponseMessage);
+                        GetResponseHeaders(result, httpResponseMessage);
 
                         return result;
                     }
@@ -284,15 +285,13 @@ namespace Clinic.Data.Repositories
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
         }
 
-        #region ManageApiResponseMessage
-        private async void ManageApiResponseMessage(DefaultApiResponseResult result, HttpResponseMessage httpResponseMessage)
+        #region ManageResponseMessage
+        private async void ManageResponseMessage(DefaultResponseResult result, HttpResponseMessage httpResponseMessage)
         {
             result.StatusCode = (int)httpResponseMessage.StatusCode;
 
             if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
             {
-                result.Success = true;
-
                 if (httpResponseMessage.Content != null)
                 {
                     string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
@@ -304,11 +303,11 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
             {
-                result.Success = true;
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
             {
-                result.Success = true;
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
             {
@@ -349,14 +348,13 @@ namespace Clinic.Data.Repositories
             }
         }
 
-        private async void ManageApiResponseMessage<TData>(DefaultApiResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
+
+        private async void ManageResponseMessage<TData>(DefaultResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
         {
             result.StatusCode = (int)httpResponseMessage.StatusCode;
 
             if (httpResponseMessage.StatusCode == HttpStatusCode.OK)
             {
-                result.Success = true;
-
                 if (httpResponseMessage.Content != null)
                 {
                     string jsonOkResponse = await httpResponseMessage.Content.ReadAsStringAsync();
@@ -373,11 +371,11 @@ namespace Clinic.Data.Repositories
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.Created)
             {
-                result.Success = true;
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.NoContent)
             {
-                result.Success = true;
+
             }
             else if (httpResponseMessage.StatusCode == HttpStatusCode.NotFound)
             {
@@ -419,8 +417,7 @@ namespace Clinic.Data.Repositories
         }
         #endregion
 
-        #region GetApiResponseHeaders
-        private void GetApiResponseHeaders(DefaultApiResponseResult result, HttpResponseMessage httpResponseMessage)
+        private void GetResponseHeaders(IResponseResult result, HttpResponseMessage httpResponseMessage)
         {
             if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
             {
@@ -439,27 +436,6 @@ namespace Clinic.Data.Repositories
                 result.Metadata = JsonConvert.DeserializeObject<Metadata>(jsonHeader);
             }
         }
-
-        private void GetApiResponseHeaders<TData>(DefaultApiResponseResult<TData> result, HttpResponseMessage httpResponseMessage)
-        {
-            if (httpResponseMessage.Headers.Contains("X-Resource-Id"))
-            {
-                result.NewResourceId = int.Parse(httpResponseMessage.Headers.GetValues("X-Resource-Id").FirstOrDefault());
-            }
-
-            if (httpResponseMessage.Headers.Contains("X-Resource-Name"))
-            {
-                result.NewResourceName = httpResponseMessage.Headers.GetValues("X-Resource-Name").FirstOrDefault();
-            }
-
-            if (httpResponseMessage.Headers.Contains("X-Pagination"))
-            {
-                string jsonHeader = httpResponseMessage.Headers.GetValues("X-Pagination").FirstOrDefault();
-
-                result.Metadata = JsonConvert.DeserializeObject<Metadata>(jsonHeader);
-            }
-        }
-        #endregion
 
         #endregion
     }

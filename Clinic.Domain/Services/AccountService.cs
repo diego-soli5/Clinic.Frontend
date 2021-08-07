@@ -21,7 +21,7 @@ namespace Clinic.Domain.Services
             _routes = routes;
         }
 
-        public async Task<DefaultApiResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password)
+        public async Task<DefaultResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password)
         {
             string url = _routes.AccountRoutes.Authenticate;
 
@@ -32,7 +32,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken)
+        public async Task<DefaultResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken)
         {
             string url = $"{_routes.AccountRoutes.GetCurrentUser}{id}";
 
@@ -43,7 +43,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id, string authToken)
+        public async Task<DefaultResponseResult> ChangeImage(IFormFile image, int id, string authToken)
         {
             string url = $"{_routes.AccountRoutes.ChangeImage}{id}";
 

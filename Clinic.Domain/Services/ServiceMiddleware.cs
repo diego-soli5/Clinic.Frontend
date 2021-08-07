@@ -5,7 +5,7 @@ namespace Clinic.Domain.Services
 {
     public abstract class ServiceMiddleware
     {
-        protected void ValidateResponse(DefaultApiResponseResult response)
+        protected void ValidateResponse(DefaultResponseResult response)
         {
             if (response.IsUnauthorizedResponse)
                 throw new UnauthorizedException();
@@ -14,7 +14,7 @@ namespace Clinic.Domain.Services
                 throw new NotFoundException(response.Message, response.NotFoundResourceId.Value);
         }
 
-        protected void ValidateResponse<TData>(DefaultApiResponseResult<TData> response)
+        protected void ValidateResponse<TData>(DefaultResponseResult<TData> response)
         {
             if (response.IsUnauthorizedResponse)
                 throw new UnauthorizedException();

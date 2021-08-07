@@ -14,7 +14,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult<TData>> Get<TData>(string url, object dataToSend = null, string authToken = null);
 
         /// <summary>
         /// Hace una peticion GET que recibe UNICAMENTE archivos.
@@ -31,7 +31,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult> Post(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult> Post(string url, object dataToSend = null, string authToken = null);
 
         /// <summary>
         /// Hace una peticion POST que envía UNICAMENTE archivos.
@@ -40,7 +40,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="filesToSend">Arreglo de archivos para enviar en el Form-Data de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult> Post(string url, IFormFile[] filesToSend, string authToken = null);
+        Task<DefaultResponseResult> Post(string url, IFormFile[] filesToSend, string authToken = null);
 
         /// <summary>
         /// Hace una peticion POST que espera recibir data en JSON.
@@ -50,7 +50,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult<TData>> Post<TData>(string url, object dataToSend = null, string authToken = null);
 
         /// <summary>
         /// Hace una peticion PUT.
@@ -59,7 +59,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult> Put(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult> Put(string url, object dataToSend = null, string authToken = null);
 
         /// <summary>
         /// Hace una peticion DELETE.
@@ -68,7 +68,7 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult> Delete(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult> Delete(string url, object dataToSend = null, string authToken = null);
 
         /// <summary>
         /// Hace una peticion PATCH.
@@ -77,6 +77,6 @@ namespace Clinic.Data.Abstractions
         /// <param name="dataToSend">Contenido para agregar al body de la petición.</param>
         /// <param name="authToken">Token de autorización para realizar la petición.</param>
         /// <returns></returns>
-        Task<DefaultApiResponseResult> Patch(string url, object dataToSend = null, string authToken = null);
+        Task<DefaultResponseResult> Patch(string url, object dataToSend = null, string authToken = null);
     }
 }

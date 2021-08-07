@@ -9,13 +9,13 @@ namespace Clinic.Domain.Abstractions
 {
     public interface IMedicService
     {
-        Task<DefaultApiResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken);
-        Task<DefaultApiResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken);
-        Task<DefaultApiResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken);
-        Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
-        Task<DefaultApiResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken);
-        Task<DefaultApiResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken);
-        Task<DefaultApiResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken);
-        Task<DefaultApiResponseResult> EditMedic(MedicUpdateDTO model, string authToken);
+        Task<DefaultResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken);
+        Task<DefaultResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken);
+        Task<DefaultResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken);
+        Task<DefaultResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken);
+        Task<DefaultResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken);
+        Task<DefaultResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken);
+        Task<DefaultResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken);
+        Task<DefaultResponseResult> EditMedic(MedicUpdateDTO model, string authToken);
     }
 }

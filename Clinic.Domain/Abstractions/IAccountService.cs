@@ -8,8 +8,8 @@ namespace Clinic.Domain.Abstractions
 {
     public interface IAccountService
     {
-        Task<DefaultApiResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password);
-        Task<DefaultApiResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken);
-        Task<DefaultApiResponseResult> ChangeImage(IFormFile image, int id,string authToken);
+        Task<DefaultResponseResult<LoginResultDTO>> TryAuthenticateAsync(string emailOrIdentification, string password);
+        Task<DefaultResponseResult<PersonDTO>> GetCurrentUser(int id, string authToken);
+        Task<DefaultResponseResult> ChangeImage(IFormFile image, int id,string authToken);
     }
 }

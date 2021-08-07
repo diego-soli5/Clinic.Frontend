@@ -25,7 +25,7 @@ namespace Clinic.Domain.Services
             _uriGenerator = uriGenerator;
         }
 
-        public async Task<DefaultApiResponseResult<IEnumerable<EmployeeListDTO>>> GetAllAsync(EmployeeQueryFilter filters, string token)
+        public async Task<DefaultResponseResult<IEnumerable<EmployeeListDTO>>> GetAllAsync(EmployeeQueryFilter filters, string token)
         {
             string url = _uriGenerator.CreatePagedListUri(_routes.EmployeeRoutes.Employee, filters).ToString();
 
@@ -36,7 +36,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<EmployeeUpdateDTO>> GetByIdToUpdateAsync(int id, string token)
+        public async Task<DefaultResponseResult<EmployeeUpdateDTO>> GetByIdToUpdateAsync(int id, string token)
         {
             string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 
@@ -54,7 +54,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<EmployeeDTO>> GetByIdAsync(int id, string token)
+        public async Task<DefaultResponseResult<EmployeeDTO>> GetByIdAsync(int id, string token)
         {
             string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 
@@ -72,7 +72,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token)
+        public async Task<DefaultResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token)
         {
             string url = $"{_routes.EmployeeRoutes.Employee}/{model.Id}";
 
@@ -83,7 +83,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token)
+        public async Task<DefaultResponseResult> CreateAsync(EmployeeCreateDTO model, string token)
         {
             string url = _routes.EmployeeRoutes.Employee;
 
@@ -94,7 +94,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> DeleteAsync(int id, string password, string token)
+        public async Task<DefaultResponseResult> DeleteAsync(int id, string password, string token)
         {
             string url = $"{_routes.EmployeeRoutes.Employee}/{id}";
 

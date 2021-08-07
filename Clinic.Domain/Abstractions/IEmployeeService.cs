@@ -8,11 +8,11 @@ namespace Clinic.Domain.Abstractions
 {
     public interface IEmployeeService
     {
-        Task<DefaultApiResponseResult<IEnumerable<EmployeeListDTO>>> GetAllAsync(EmployeeQueryFilter filters, string token);
-        Task<DefaultApiResponseResult<EmployeeDTO>> GetByIdAsync(int id, string token);
-        Task<DefaultApiResponseResult<EmployeeUpdateDTO>> GetByIdToUpdateAsync(int id, string token);
-        Task<DefaultApiResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token);
-        Task<DefaultApiResponseResult> CreateAsync(EmployeeCreateDTO model, string token);
-        Task<DefaultApiResponseResult> DeleteAsync(int id, string pass, string token);
+        Task<DefaultResponseResult<IEnumerable<EmployeeListDTO>>> GetAllAsync(EmployeeQueryFilter filters, string token);
+        Task<DefaultResponseResult<EmployeeDTO>> GetByIdAsync(int id, string token);
+        Task<DefaultResponseResult<EmployeeUpdateDTO>> GetByIdToUpdateAsync(int id, string token);
+        Task<DefaultResponseResult> UpdateAsync(EmployeeUpdateDTO model, string token);
+        Task<DefaultResponseResult> CreateAsync(EmployeeCreateDTO model, string token);
+        Task<DefaultResponseResult> DeleteAsync(int id, string pass, string token);
     }
 }

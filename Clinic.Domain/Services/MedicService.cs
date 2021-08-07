@@ -26,7 +26,7 @@ namespace Clinic.Domain.Services
             _routes = routes;
         }
 
-        public async Task<DefaultApiResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken)
+        public async Task<DefaultResponseResult<IEnumerable<MedicListDTO>>> GetAllAsync(MedicQueryFilter filters, string authToken)
         {
             string url = _uriGenerator.CreatePagedListUri(_routes.MedicRoutes.Medic, filters).ToString();
 
@@ -37,7 +37,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken)
+        public async Task<DefaultResponseResult<IEnumerable<MedicDisplayPendingForUpdateDTO>>> GetAllMedicsPendingForUpdate(string authToken)
         {
             var queryParams = new
             {
@@ -53,7 +53,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken)
+        public async Task<DefaultResponseResult<MedicPedingUpdateDTO>> GetMedicPendingForUpdate(int idEmployee, string authToken)
         {
             string url = $"{_routes.MedicRoutes.Pending}{idEmployee}";
 
@@ -64,7 +64,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken)
+        public async Task<DefaultResponseResult<MedicUpdateDTO>> GetMedicForEdit(int id, string authToken)
         {
             string url = $"{_routes.MedicRoutes.Medic}/{id}";
 
@@ -75,7 +75,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> EditMedic(MedicUpdateDTO model, string authToken)
+        public async Task<DefaultResponseResult> EditMedic(MedicUpdateDTO model, string authToken)
         {
             string url = $"{_routes.MedicRoutes.Edit}{model.Id}";
 
@@ -93,7 +93,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
+        public async Task<DefaultResponseResult> UpdatePendingMedic(MedicPedingUpdateDTO model, string authToken)
         {
             string url = $"{_routes.MedicRoutes.Medic}/{model.IdEmployee}";
 
@@ -104,7 +104,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken)
+        public async Task<DefaultResponseResult<IEnumerable<MedicalSpecialtyListDTO>>> GetAllMedicalSpecialties(string authToken)
         {
             var response = await _repository.Get<IEnumerable<MedicalSpecialtyListDTO>>(_routes.MedicalSpecialtyRoutes.MedicalSpecialty, authToken: authToken);
 
@@ -113,7 +113,7 @@ namespace Clinic.Domain.Services
             return response;
         }
 
-        public async Task<DefaultApiResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken)
+        public async Task<DefaultResponseResult<IEnumerable<ConsultingRoomDTO>>> GetAllConsultingRooms(string authToken)
         {
             var response = await _repository.Get<IEnumerable<ConsultingRoomDTO>>(_routes.ConsultingRoomRoutes.ConsultingRoom, authToken: authToken);
 
